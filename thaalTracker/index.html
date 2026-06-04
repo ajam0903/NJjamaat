@@ -68,12 +68,14 @@
   .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 
   /* ── Metrics ── */
-  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 1.5rem; }
+  .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 1.5rem; }
+  @media (max-width: 680px) { .metrics-row { grid-template-columns: 1fr 1fr; gap: 10px; } }
   .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
   .metric-card:nth-child(1){animation-delay:.05s} .metric-card:nth-child(2){animation-delay:.1s} .metric-card:nth-child(3){animation-delay:.15s} .metric-card:nth-child(4){animation-delay:.2s}
   @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   .metric-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
   .metric-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); line-height: 1; }
+  @media (max-width: 680px) { .metric-card { padding: 0.9rem 1rem; } .metric-value { font-size: 28px; } }
   .metric-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
 
   /* ── Progress ── */
@@ -123,8 +125,8 @@
   .badge-gray  { background: var(--surface2);    color: var(--text3); border: 1px solid var(--border); }
 
   /* ── Number tag ── */
-  .num-tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 7px; font-family: 'DM Sans', monospace; background: var(--accent-light); color: var(--accent-dark); border: 1px solid rgba(184,92,42,0.25); display: inline-block; }
-  .num-tag.returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.25); text-decoration: line-through; opacity: 0.75; }
+  .num-tag { font-size: 15px; font-weight: 700; padding: 4px 14px; border-radius: 8px; font-family: 'DM Sans', monospace; background: var(--accent-light); color: var(--accent-dark); border: 1px solid rgba(184,92,42,0.3); display: inline-block; letter-spacing: 0.02em; }
+  .num-tag.returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.3); text-decoration: line-through; opacity: 0.75; }
 
   /* ── Number input ── */
   .num-input-wrap { display: flex; flex-direction: column; gap: 3px; }
@@ -218,22 +220,13 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.6 2 10c0 2.4 1.2 4.5 3 6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8S17.5 2 12 2z"/></svg></div>
       <span class="logo-text">Thaal Tracker</span>
       <span class="logo-sub">NJ Jamaat · Muharram 1447</span>
-    </div>
-    <div>
-      <button class="btn" onclick="openExport()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Export CSV
-      </button>
     </div>
   </div>
 </header>
 
 <main class="main">
-  <div class="metrics-row" id="metrics-row"></div>
-
   <div class="progress-section">
     <div>
       <div class="progress-header">
@@ -275,7 +268,7 @@
             <span class="sortable" onclick="sortBy('last-name')" id="th-last-name" style="text-transform:uppercase;font-size:11px;letter-spacing:.06em">Last <span class="sort-ind" id="si-last-name"></span></span>
           </th>
           <th class="sortable" onclick="sortBy('count')" id="th-count">Thaals <span class="sort-ind" id="si-count"></span></th>
-          <th class="sortable" onclick="sortBy('num')" id="th-num">Number <span class="sort-ind" id="si-num"></span></th>
+          <th class="sortable" onclick="sortBy('num')" id="th-num">Received # <span class="sort-ind" id="si-num"></span></th>
           <th class="sortable" onclick="sortBy('returned')" id="th-returned">Returned <span class="sort-ind" id="si-returned"></span></th>
         </tr></thead>
         <tbody id="pledge-tbody"></tbody>
@@ -601,19 +594,14 @@ function renderMetrics() {
   const numbered = numberedCount();
   const returned = returnedCount();
   const stillOut = numbered - returned;
-  const numPct = total   ? Math.round(numbered/total*100)   : 0;
+  const thaalsReceived = pledges.filter(p => p.num !== null).reduce((s,p) => s + p.count, 0);
+  const thaalsTotal    = totalThaals();
+  const numPct = thaalsTotal ? Math.round(thaalsReceived/thaalsTotal*100) : 0;
   const retPct = numbered ? Math.round(returned/numbered*100) : 0;
-
-  document.getElementById('metrics-row').innerHTML = `
-    <div class="metric-card"><div class="metric-label">Pledgers</div><div class="metric-value">${total}</div><div class="metric-sub">families</div></div>
-    <div class="metric-card"><div class="metric-label">Thaals pledged</div><div class="metric-value">${totalThaals()}</div><div class="metric-sub">total</div></div>
-    <div class="metric-card"><div class="metric-label">Returned</div><div class="metric-value" style="color:var(--green)">${returned}</div><div class="metric-sub">of ${numbered} numbered</div></div>
-    <div class="metric-card"><div class="metric-label">Still out</div><div class="metric-value" style="color:var(--amber)">${stillOut}</div><div class="metric-sub">need to return</div></div>
-  `;
 
   document.getElementById('num-progress-fill').style.width = numPct + '%';
   document.getElementById('num-progress-pct').textContent  = numPct + '%';
-  document.getElementById('num-progress-label').textContent = `Numbering — ${numbered} of ${total} pledgers`;
+  document.getElementById('num-progress-label').textContent = `Received — ${thaalsReceived} of ${thaalsTotal} thaals`;
 
   document.getElementById('ret-progress-fill').style.width = retPct + '%';
   document.getElementById('ret-progress-pct').textContent  = retPct + '%';
@@ -677,14 +665,14 @@ function renderPledges() {
             onkeydown="handleNumKey(event,${p.id})">
           <button class="cancel-btn" onclick="cancelNumEdit()">✕</button>
         </div>
-        <span class="num-input-hint">Enter to save · Esc to cancel</span>
+        <span class="num-input-hint">Enter engraved # · Enter to save · Esc to cancel</span>
         <span class="num-input-err" id="ni-err-${p.id}"></span>
       </div>`;
     } else if (p.num !== null) {
       numCell = `<span class="num-tag${p.returned?' returned':''}">#${p.num}</span>
         <button class="edit-btn" onclick="startNumEdit(${p.id})" title="Edit">✎</button>`;
     } else {
-      numCell = `<button class="assign-btn" onclick="startNumEdit(${p.id})">+ Assign</button>`;
+      numCell = `<button class="assign-btn" onclick="startNumEdit(${p.id})">Mark Received</button>`;
     }
 
     // Return cell
@@ -727,7 +715,7 @@ function renderSummary() {
     `<div class="top-pledger">
       <span class="pledger-rank">${i+1}</span>
       <span class="pledger-name">${esc(p.name)}</span>
-      <span class="badge badge-blue">${p.count}</span>
+      <span class="badge badge-gray">${p.count}</span>
     </div>`
   ).join('');
 }
