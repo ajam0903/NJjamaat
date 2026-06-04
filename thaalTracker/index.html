@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thaal Tracker — NJ Jamaat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f4ef;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: rgba(60,50,30,0.12);
+    --border-strong: rgba(60,50,30,0.22);
+    --text: #1a1510;
+    --text2: #6b5e4e;
+    --text3: #a39080;
+    --accent: #b85c2a;
+    --accent-light: #f5e8de;
+    --accent-dark: #8a3d18;
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --amber: #856404;
+    --amber-light: #fff3cd;
+    --blue: #1a4e8a;
+    --blue-light: #dce9f8;
+    --red: #9b1c1c;
+    --red-light: #fde8e8;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1510;
+      --surface: #231e18;
+      --surface2: #2e2820;
+      --border: rgba(255,220,180,0.1);
+      --border-strong: rgba(255,220,180,0.2);
+      --text: #f0e8dc;
+      --text2: #b8a898;
+      --text3: #7a6858;
+      --accent: #e07840;
+      --accent-light: #3a2215;
+      --accent-dark: #f09060;
+      --green: #74c69d;
+      --green-light: #1b3a2a;
+      --amber: #ffc107;
+      --amber-light: #332600;
+      --blue: #74aee8;
+      --blue-light: #0d2544;
+      --red: #f87171;
+      --red-light: #3a1010;
+    }
+  }
+
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 1rem;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon svg { width: 18px; height: 18px; fill: white; }
+  .logo-text { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-left: 4px; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: var(--radius);
+    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border-strong);
+    background: var(--surface); color: var(--text2);
+    transition: all 0.15s; text-decoration: none;
+  }
+  .btn:hover { background: var(--surface2); color: var(--text); }
+  .btn-accent { background: var(--accent); color: white; border-color: transparent; }
+  .btn-accent:hover { background: var(--accent-dark); color: white; }
+  .btn-green { background: var(--green); color: white; border-color: transparent; }
+  .btn-green:hover { background: #1f5038; color: white; }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ── Layout ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  /* ── Metrics ── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 1.5rem;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.4s ease both;
+  }
+  .metric-card:nth-child(1) { animation-delay: 0.05s; }
+  .metric-card:nth-child(2) { animation-delay: 0.10s; }
+  .metric-card:nth-child(3) { animation-delay: 0.15s; }
+  .metric-card:nth-child(4) { animation-delay: 0.20s; }
+  .metric-card:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .metric-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+  .metric-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); line-height: 1; }
+  .metric-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+  /* ── Progress bars ── */
+  .progress-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 600px) { .progress-section { grid-template-columns: 1fr; } }
+  .progress-item {}
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-header span { font-size: 13px; font-weight: 500; color: var(--text2); }
+  .progress-track { height: 10px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .progress-fill-accent { background: var(--accent); }
+  .progress-fill-green { background: var(--green); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 1.25rem;
+    background: var(--surface2); padding: 4px;
+    border-radius: var(--radius); width: fit-content;
+  }
+  .tab-btn {
+    padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; background: transparent; color: var(--text2);
+    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+  }
+  .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-wrap svg {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    width: 15px; height: 15px; color: var(--text3); pointer-events: none;
+  }
+  .search-input {
+    width: 100%; padding: 8px 12px 8px 32px;
+    border: 1px solid var(--border-strong); border-radius: var(--radius);
+    background: var(--surface); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .filter-select {
+    padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius);
+    background: var(--surface); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; cursor: pointer;
+  }
+
+  /* ── Table ── */
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text3);
+    padding: 12px 16px; background: var(--surface2);
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody tr { transition: background 0.1s; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  .name-cell { font-weight: 500; }
+  .email-cell { color: var(--text3); font-size: 12px; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 99px; white-space: nowrap;
+  }
+  .badge-blue   { background: var(--blue-light);  color: var(--blue); }
+  .badge-green  { background: var(--green-light); color: var(--green); }
+  .badge-amber  { background: var(--amber-light); color: var(--amber); }
+  .badge-gray   { background: var(--surface2);    color: var(--text3); border: 1px solid var(--border); }
+  .badge-red    { background: var(--red-light);   color: var(--red); }
+
+  /* ── Thaal number tags ── */
+  .num-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .num-tag {
+    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px;
+    font-family: 'DM Sans', monospace;
+    background: var(--accent-light); color: var(--accent-dark);
+    border: 1px solid rgba(184,92,42,0.2);
+  }
+  .num-tag.returned {
+    background: var(--green-light); color: var(--green);
+    border-color: rgba(45,106,79,0.25);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .assign-btn {
+    font-size: 12px; padding: 4px 10px; border-radius: 7px; cursor: pointer;
+    border: 1px dashed var(--border-strong); background: transparent; color: var(--text3);
+    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .assign-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .edit-btn {
+    font-size: 11px; padding: 3px 7px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; color: var(--text3);
+    font-family: 'DM Sans', sans-serif; margin-left: 4px; transition: all 0.15s;
+  }
+  .edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Return toggle button ── */
+  .return-btn {
+    font-size: 11px; padding: 4px 10px; border-radius: 7px; cursor: pointer;
+    border: 1px solid var(--border-strong); background: transparent;
+    color: var(--text3); font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .return-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .return-btn.is-returned {
+    background: var(--green-light); color: var(--green);
+    border-color: rgba(45,106,79,0.35);
+  }
+  .return-btn.is-returned:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+
+  /* ── Empty state ── */
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+  .empty-state p { margin-top: 8px; font-size: 13px; }
+
+  /* ── Summary tab ── */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+  .summary-section { padding: 1.5rem; }
+  .summary-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 1rem; color: var(--text); }
+  .top-pledger { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .top-pledger:last-child { border-bottom: none; }
+  .pledger-rank { font-size: 11px; font-weight: 500; color: var(--text3); width: 20px; }
+  .pledger-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .breakdown-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-label { color: var(--text2); }
+  .breakdown-bar-wrap { flex: 1; margin: 0 12px; height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .breakdown-bar { height: 100%; background: var(--accent); border-radius: 99px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 1rem; backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: var(--radius-lg);
+    border: 1px solid var(--border-strong); padding: 1.75rem;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    animation: modalIn 0.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header { margin-bottom: 4px; }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); }
+  .modal-sub { font-size: 13px; color: var(--text3); margin-bottom: 1rem; }
+  .num-picker {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    max-height: 200px; overflow-y: auto; margin-bottom: 1rem; padding: 2px;
+  }
+  .num-option {
+    font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 8px;
+    border: 1px solid var(--border-strong); cursor: pointer;
+    background: var(--surface); color: var(--text2);
+    font-family: 'DM Sans', monospace; transition: all 0.12s; user-select: none;
+  }
+  .num-option:hover { border-color: var(--accent); color: var(--accent); }
+  .num-option.selected { background: var(--accent); border-color: var(--accent); color: white; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal-note { font-size: 12px; color: var(--text3); margin-bottom: 1rem; padding: 8px 12px; background: var(--surface2); border-radius: var(--radius); }
+
+  /* ── Export modal ── */
+  .export-area {
+    width: 100%; height: 200px;
+    border: 1px solid var(--border-strong); border-radius: var(--radius);
+    padding: 10px; font-family: monospace; font-size: 12px;
+    background: var(--surface2); color: var(--text); resize: none;
+  }
+
+  /* ── Section header with action ── */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    .main { padding: 1rem; }
+    .site-header { padding: 0 1rem; }
+    .logo-text { font-size: 17px; }
+    table { font-size: 12.5px; }
+    thead th, tbody td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.6 2 10c0 2.4 1.2 4.5 3 6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8S17.5 2 12 2z"/></svg>
+      </div>
+      <span class="logo-text">Thaal Tracker</span>
+      <span class="logo-sub">NJ Jamaat · Muharram 1447</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="openExport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export CSV
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="metrics-row" id="metrics-row"></div>
+
+  <div class="progress-section">
+    <div class="progress-item">
+      <div class="progress-header">
+        <span id="assign-progress-label">Assignment progress</span>
+        <span id="assign-progress-pct" style="font-weight:600;color:var(--accent)">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill progress-fill-accent" id="assign-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-header">
+        <span id="return-progress-label">Return progress</span>
+        <span id="return-progress-pct" style="font-weight:600;color:var(--green)">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill progress-fill-green" id="return-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('pledges',this)">Pledges</button>
+    <button class="tab-btn" onclick="switchTab('numbers',this)">By Number</button>
+    <button class="tab-btn" onclick="switchTab('returns',this)">Returns</button>
+    <button class="tab-btn" onclick="switchTab('summary',this)">Summary</button>
+  </div>
+
+  <div class="toolbar" id="toolbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" id="search" type="text" placeholder="Search by name, email, or thaal #…" oninput="render()">
+    </div>
+    <select class="filter-select" id="filter" onchange="render()">
+      <option value="all">All</option>
+      <option value="pending">Unassigned</option>
+      <option value="partial">Partially assigned</option>
+      <option value="done">Fully assigned</option>
+      <option value="returned">All returned</option>
+      <option value="not-returned">Not fully returned</option>
+    </select>
+  </div>
+
+  <!-- Pledges tab -->
+  <div id="tab-pledges">
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Pledged</th>
+              <th>Thaal Numbers</th>
+              <th>Returned</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="pledge-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- By Number tab -->
+  <div id="tab-numbers" style="display:none">
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Thaal #</th>
+              <th>Owner</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Return Status</th>
+            </tr>
+          </thead>
+          <tbody id="numbers-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Returns tab -->
+  <div id="tab-returns" style="display:none">
+    <div class="section-header">
+      <div style="font-size:13px;color:var(--text3)" id="returns-count-label"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="filterReturns('all')" id="ret-filter-all">All</button>
+        <button class="btn" onclick="filterReturns('out')" id="ret-filter-out">Still Out</button>
+        <button class="btn" onclick="filterReturns('returned')" id="ret-filter-returned">Returned</button>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Thaal #</th>
+              <th>Owner</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Return Status</th>
+            </tr>
+          </thead>
+          <tbody id="returns-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary tab -->
+  <div id="tab-summary" style="display:none">
+    <div class="table-card">
+      <div class="summary-grid">
+        <div class="summary-section" style="border-right:1px solid var(--border)">
+          <div class="summary-title">Largest pledges</div>
+          <div id="top-pledgers"></div>
+        </div>
+        <div class="summary-section">
+          <div class="summary-title">Pledge breakdown</div>
+          <div id="breakdown"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Assign modal -->
+<div class="modal-overlay" id="assign-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-name"></div>
+      <div class="modal-sub" id="modal-sub"></div>
+    </div>
+    <div class="modal-note" id="modal-note"></div>
+    <div class="num-picker" id="num-picker"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModalDirect()">Cancel</button>
+      <button class="btn btn-accent" onclick="confirmAssign()">Save assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal" onclick="closeExportModal(event)">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-title" style="margin-bottom:8px;font-family:'DM Serif Display',serif;font-size:20px">Export data</div>
+    <div class="modal-sub">Copy the CSV below and paste into Excel or Google Sheets.</div>
+    <textarea class="export-area" id="export-area" readonly></textarea>
+    <div class="modal-footer" style="margin-top:1rem">
+      <button class="btn" onclick="closeExportModal()">Close</button>
+      <button class="btn btn-accent" onclick="copyCSV()">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+const RAW = [
+  ["Sakina Sodawala","3474453670","sakinasodawala@gmail.com",1],
+  ["Huzefa Harnesswalla","3474868243","mardiamurtaza@gmail.com",1],
+  ["Shk Amir Ali Abbasi","9084209148","Abbasiamir786@gmail.com",5],
+  ["Tahera Kapadvanjwala","7326460199","Tahera.kaps@gmail.com",3],
+  ["Khozem Kharawalla","7324297557","khozem_k@yahoo.com",2],
+  ["Nauman Diwan","6092733113","Munirakh21@gmail.com",1],
+  ["Kutubuddin Kapadia","973-277-4556","kkutub2009@gmail.com",2],
+  ["Shabbir Garbadawala","5512004430","shabbirmg@gmail.com",1],
+  ["Murtaza Adenwala","9085381211","murtuza.adenwala@gmail.com",1],
+  ["Huzefa Qubbawala","7329109753","huzefa.qubbawala@gmail.com",1],
+  ["Jumana Farhan Ali","617-372-3672","jumana.dahodwala@gmail.com",3],
+  ["Sakina Karimee","7326680808","Sakinad5@gmail.com",2],
+  ["Shk Shabbir saifee (HM)","+919617562752","saifeeshhh@gmail.com",1],
+  ["Shk Tayzoon Rasani","7423722226","rasanit@gmail.com",2],
+  ["Alifiya Jawrawala","303-330-6044","Alifiyajawrawala44@gmail.com",2],
+  ["Rashida Cassubhai","2013102388","yrcassubhai@yahoo.com",1],
+  ["Imtiyaz Lokhandwala","2142515016","imtiyaz1@msn.com",1],
+  ["Maryam Khomusi","6096192608","maryam52@gmail.com",4],
+  ["Shabbir Shk Yusuf bhai Dhinojwala","7324966454","shabbir.y@gmail.com",1],
+  ["Husain Ginwala","6095324060","ginwalas2000@gmail.com",1],
+  ["Murtaza Divasali","6505212575","murtazakd@gmail.com",1],
+  ["Qusai Dahodwala","4806122750","qusai.dahodwala@gmail.com",1],
+  ["Abid Jamali","201 888-7975","abidjamali@aol.com",2],
+  ["Mu'tahera Husain (sh jabir bhai zakir)","7329251161","tahera5152@gmail.com",3],
+  ["Sakina Jamali","6304843632","sakina@jamalifamily.com",5],
+  ["Nisreen Kapadia","7328575510","Mnkapadia@gmail.com",1],
+  ["Shabbir Abbas","9083311528","talatabbas@gmail.com",2],
+  ["Tasneem Hussain Kapadia","6099214480","tasneem.29@gmail.com",1],
+  ["Moiz Hakimi","6092877837","fatema.hakimi@gmail.com",1],
+  ["Mustafa Bootwala","+17326478854","Mustafatema9314@gmail.com",1],
+  ["Husain Badri","8483915239","badri.hussain@gmail.com",1],
+  ["Rashida Chitalwala","6263548012","rmchital2011@gmail.com",1],
+  ["Rashida Furniturewalla","+18483917152","rashida171@gmail.com",1],
+  ["Huseini Tambawala","—","huseinitambawala@gmail.com",1],
+  ["Y (mhtayeb)","9172253341","mhtayeb@hotmail.com",4],
+  ["Murtuza Tohfafarosh","7324071805","murtuza.tohfafarosh@gmail.com",1],
+  ["Murtaza Waglawala","6463189790","expertmurtuza@gmail.com",1],
+  ["Jamila Bombaywala","6098744081","jambmw@gmail.com",1],
+  ["Shabbir Ali","7324478939","az.shabbir@gmail.com",3],
+  ["Abbasbhaisaheb Hamdani","2019167523","abbashamdani@gmail.com",1],
+  ["Mustafa Mahuvawala","732-668-1015","Mzakir21@gmail.com",1],
+  ["Sameena Kagalwalla","7328741692","sameenaak@gmail.com",2],
+  ["Rashida Abbas","19083311530","Rashida@uscnet.com",1],
+  ["Nafeesa Shaikh Mansoor Husain","9084510487","mrsnafees@gmail.com",6],
+  ["Huzaifa S Matawala","8484671159","huzaifamat@gmail.com",1],
+  ["Saifee Attarwala","8135971403","saifeesa@gmail.com",2],
+  ["Saleem Husain","9082955538","Saleem1668@aol.com",5],
+  ["Mustafa Sabir","2013042538","msabir52@yahoo.com",2],
+  ["Ismail Manaqibwala","6096474587","nmanaqibwala@gmail.com",1],
+  ["Husein Chhatriwala","9085282138","husein.chhatriwala@gmail.com",1],
+  ["Insia Saleh","718-790-2937","insia.s@gmail.com",2],
+  ["Aliasgar Ghasletwala","6095104298","armariam@gmail.com",2],
+  ["Sh Numan Diwan","6092733113","Naumandiwan@gmail.com",1],
+  ["Murtaza Khomusi","6096192634","murtaza.khomusi@gmail.com",2],
+  ["Juzer Rasani","20353353","jrasani@gmail.com",1],
+  ["Mustafa Singapurwala","8487026113","zainabmustafa110@gmail.com",1],
+  ["Murtuza Badshah","7328812786","murtuza.badshah5@gmail.com",1],
+  ["Nafisa Firozbhai Rangwala","732-754-3049","nafisafrangwala@gmail.com",1],
+  ["Rashida Saify","9083382152","rashida.saifuddin@gmail.com",1],
+  ["AliAsgar Najmi","8482161753","husseinsboy@gmail.com",1],
+  ["Shoeb Badri","2914967505","badrishoeb53@gmail.com",1],
+  ["Jumana bs Husami","+919967900541","jumana53husami@gmail.com",1],
+  ["M. Mohammed Afini","7323316942","mohd.afini@gmail.com",1],
+  ["Shabbir Dalal","2122039424","shabbirdalal@hotmail.com",2],
+  ["Qutubuddin Saifuddin Wajawala","8486671582","qutub14@gmail.com",1],
+  ["Sibtain Tinwala","8467725314","sibtain.tinwala@anjuman-e-burhani.org",2],
+  ["Farida Rehmanji","8482194408","farida_rehmanji@yahoo.com",1],
+  ["Shabbir Ali zakir","732-447 8939","az.shabbir@gmail.com",2],
+  ["Nauman Diwan (2nd entry)","6092733113","Munirakh21@gmail.com",2],
+  ["Yunus Bandukwala","732-289-7333","yubandukwala@gmail.com",4],
+  ["Hasnain Kurawadwala","5134057929","hasnain.kurawadwala@gmail.com",1],
+  ["Khuzem Batawala","7326920397","Khuzem@hotmail.com",1],
+  ["Yusuf Nathani","+919725612997","yusufeen@gmail.com",1],
+  ["Husain Shk Yusuf Dhinojwala","6782301205","husain2ryme@yahoo.co.in",2],
+  ["Shafakut Readymadewala","+16512359722","shafakut@gmail.com",1],
+  ["Zainab Garbadawala","5512004060","zainabsg52@gmail.com",1],
+  ["Shabbir Mumtaz Husain","9082397918","shabbir.mh@gmail.com",1],
+  ["Abdul Kader Lashkarwala","2674603189","lashkarwala@gmail.com",1],
+  ["Maria Harnesswalla","3474868243","mardiamurtaza@gmail.com",1],
+  ["Mansoor Kalyanwala","6097211451","mkalyanw@gmail.com",1],
+  ["Idris Khajanchi","9088126759","idris.khajanchi@gmail.com",2],
+  ["Mohammed Attarwala","9176826359","iattarwala@gmail.com",1],
+  ["Nauman Shk Abdul Qadir Diwan","6092733113","Naumandiwan@gmail.com",2],
+  ["Durriyah Paghdiwala","2152086148","durriyah96@gmail.com",3],
+  ["Kulsum Dhanerawala","847 7307804","Kulsumzahra@gmail.com",1],
+  ["Kaneez Darbar","9736327059","Kdarbar@comcast.net",1],
+  ["Shehnaaz Shabbir Jariwala","2012404022","Shehnazjari@gmail.com",1],
+  ["Shk. Zakiuddin Husain","9086166723","zakiuddin5@gmail.com",4],
+  ["Lamiya Khazanchi","7329399672","Mkhajanchi52@hotmail.com",2]
+];
+
+// Build pledges array
+const pledges = RAW.map((r, i) => ({
+  id: i,
+  name: r[0],
+  phone: r[1],
+  email: r[2],
+  count: parseInt(r[3]) || 1,
+  numbers: [],
+  returned: []   // thaal numbers returned back to the owner
+}));
+
+const TOTAL_THAALS = pledges.reduce((s,p) => s + p.count, 0);
+
+// ── Persistence ───────────────────────────────────────────────────────────────
+function loadState() {
+  try {
+    const s = localStorage.getItem('thaal_v3');
+    if (s) {
+      JSON.parse(s).forEach(({id, numbers, returned}) => {
+        const p = pledges.find(x => x.id === id);
+        if (p) {
+          p.numbers  = numbers  || [];
+          p.returned = returned || [];
+        }
+      });
+      return;
+    }
+    // Migrate from v2
+    const v2 = localStorage.getItem('thaal_v2');
+    if (v2) {
+      JSON.parse(v2).forEach(({id, numbers}) => {
+        const p = pledges.find(x => x.id === id);
+        if (p) { p.numbers = numbers || []; p.returned = []; }
+      });
+      saveState();
+    }
+  } catch(e) {}
+}
+function saveState() {
+  try {
+    localStorage.setItem('thaal_v3', JSON.stringify(
+      pledges.map(p => ({id: p.id, numbers: p.numbers, returned: p.returned}))
+    ));
+  } catch(e) {}
+}
+loadState();
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function allUsedNumbers() {
+  const s = new Set();
+  pledges.forEach(p => p.numbers.forEach(n => s.add(n)));
+  return s;
+}
+function availableFor(pledge) {
+  const used = allUsedNumbers();
+  pledge.numbers.forEach(n => used.delete(n));
+  const avail = [];
+  for (let i = 1; avail.length < 80; i++) {
+    if (!used.has(i)) avail.push(i);
+    if (i > TOTAL_THAALS + 30) break;
+  }
+  return avail;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function assignedCount() { return pledges.reduce((s,p) => s+p.numbers.length, 0); }
+function returnedCount() { return pledges.reduce((s,p) => s+p.returned.length, 0); }
+function fullyAssigned() { return pledges.filter(p => p.numbers.length >= p.count).length; }
+function isReturned(p, n) { return p.returned.includes(n); }
+
+// ── Metrics ───────────────────────────────────────────────────────────────────
+function renderMetrics() {
+  const assigned = assignedCount();
+  const returned = returnedCount();
+  const fullyAss = fullyAssigned();
+  const stillOut = assigned - returned;
+  const assignPct = TOTAL_THAALS ? Math.round(assigned/TOTAL_THAALS*100) : 0;
+  const returnPct = assigned ? Math.round(returned/assigned*100) : 0;
+
+  document.getElementById('metrics-row').innerHTML = `
+    <div class="metric-card"><div class="metric-label">Pledgers</div><div class="metric-value">${pledges.length}</div><div class="metric-sub">families</div></div>
+    <div class="metric-card"><div class="metric-label">Thaals pledged</div><div class="metric-value">${TOTAL_THAALS}</div><div class="metric-sub">total</div></div>
+    <div class="metric-card"><div class="metric-label">Numbers assigned</div><div class="metric-value">${assigned}</div><div class="metric-sub">of ${TOTAL_THAALS} (${assignPct}%)</div></div>
+    <div class="metric-card"><div class="metric-label">Returned</div><div class="metric-value" style="color:var(--green)">${returned}</div><div class="metric-sub">of ${assigned} assigned</div></div>
+    <div class="metric-card"><div class="metric-label">Still out</div><div class="metric-value" style="color:var(--amber)">${stillOut}</div><div class="metric-sub">need to return</div></div>
+  `;
+
+  document.getElementById('assign-progress-fill').style.width = assignPct + '%';
+  document.getElementById('assign-progress-pct').textContent = assignPct + '%';
+  document.getElementById('assign-progress-label').textContent = `Engraving — ${assigned} of ${TOTAL_THAALS} thaals numbered`;
+
+  document.getElementById('return-progress-fill').style.width = returnPct + '%';
+  document.getElementById('return-progress-pct').textContent = returnPct + '%';
+  document.getElementById('return-progress-label').textContent = `Returns — ${returned} of ${assigned} thaals returned`;
+}
+
+// ── Active tab ────────────────────────────────────────────────────────────────
+let activeTab = 'pledges';
+let returnsFilter = 'all';
+
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['pledges','numbers','returns','summary'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === tab ? '' : 'none';
+  });
+  document.getElementById('toolbar').style.display = (tab === 'summary' || tab === 'returns') ? 'none' : '';
+  render();
+}
+
+// ── Pledges table ─────────────────────────────────────────────────────────────
+function renderPledges() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const f = document.getElementById('filter').value;
+
+  const rows = pledges.filter(p => {
+    const matchQ = !q || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)
+      || p.phone.includes(q) || p.numbers.some(n => String(n).includes(q));
+    const full    = p.numbers.length >= p.count;
+    const partial = p.numbers.length > 0 && !full;
+    const none    = p.numbers.length === 0;
+    const allRet  = p.numbers.length > 0 && p.numbers.every(n => p.returned.includes(n));
+    const notAllRet = p.numbers.length > 0 && !allRet;
+    if (f === 'pending'      && !none)     return false;
+    if (f === 'partial'      && !partial)  return false;
+    if (f === 'done'         && !full)     return false;
+    if (f === 'returned'     && !allRet)   return false;
+    if (f === 'not-returned' && !notAllRet) return false;
+    return matchQ;
+  });
+
+  if (!rows.length) {
+    document.getElementById('pledge-tbody').innerHTML =
+      '<tr><td colspan="7"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
+    return;
+  }
+
+  document.getElementById('pledge-tbody').innerHTML = rows.map(p => {
+    const full    = p.numbers.length >= p.count;
+    const partial = p.numbers.length > 0 && !full;
+
+    let statusBadge;
+    if (!p.numbers.length) {
+      statusBadge = '<span class="badge badge-gray">Pending</span>';
+    } else if (partial) {
+      statusBadge = '<span class="badge badge-amber">Partial</span>';
+    } else {
+      statusBadge = '<span class="badge badge-green">Assigned</span>';
+    }
+
+    const numsHtml = p.numbers.length
+      ? `<div class="num-tags">${p.numbers.map(n =>
+          `<span class="num-tag${p.returned.includes(n)?' returned':''}">#${n}</span>`
+        ).join('')}</div>`
+      : '';
+
+    const retCount  = p.returned.length;
+    const retOf     = p.numbers.length;
+    let retBadge = '';
+    if (retOf > 0) {
+      if (retCount === retOf)  retBadge = `<span class="badge badge-green">${retCount}/${retOf}</span>`;
+      else if (retCount > 0)   retBadge = `<span class="badge badge-amber">${retCount}/${retOf}</span>`;
+      else                     retBadge = `<span class="badge badge-gray">0/${retOf}</span>`;
+    } else {
+      retBadge = '<span class="badge badge-gray">—</span>';
+    }
+
+    const assignHtml = !full
+      ? `<button class="assign-btn" onclick="openModal(${p.id})">+ Assign</button>`
+      : '';
+    const editHtml = p.numbers.length
+      ? `<button class="edit-btn" onclick="openModal(${p.id})" title="Edit">✎</button>`
+      : '';
+
+    return `<tr>
+      <td class="name-cell">${esc(p.name)}</td>
+      <td><span class="badge badge-blue">${p.count}</span></td>
+      <td>${numsHtml}${assignHtml}${editHtml}</td>
+      <td>${retBadge}</td>
+      <td class="email-cell">${esc(p.email)}</td>
+      <td class="email-cell">${esc(p.phone)}</td>
+      <td>${statusBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Numbers table ─────────────────────────────────────────────────────────────
+function renderNumbers() {
+  const numMap = {};
+  pledges.forEach(p => p.numbers.forEach(n => { numMap[n] = p; }));
+  const nums = Object.keys(numMap).map(Number).sort((a,b) => a-b);
+
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = nums.filter(n => {
+    if (!q) return true;
+    const p = numMap[n];
+    return String(n).includes(q) || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q);
+  });
+
+  if (!filtered.length) {
+    document.getElementById('numbers-tbody').innerHTML =
+      '<tr><td colspan="5"><div class="empty-state">No numbers assigned yet<p>Go to the Pledges tab to start assigning thaal numbers.</p></div></td></tr>';
+    return;
+  }
+
+  document.getElementById('numbers-tbody').innerHTML = filtered.map(n => {
+    const p = numMap[n];
+    const ret = p.returned.includes(n);
+    const statusBadge = ret
+      ? '<span class="badge badge-green">Returned</span>'
+      : '<span class="badge badge-amber">Still Out</span>';
+    const btnLabel = ret ? '↩ Undo return' : '✓ Mark returned';
+    return `<tr>
+      <td><span class="num-tag${ret?' returned':''}">#${n}</span></td>
+      <td class="name-cell">${esc(p.name)}</td>
+      <td class="email-cell">${esc(p.email)}</td>
+      <td class="email-cell">${esc(p.phone)}</td>
+      <td style="display:flex;align-items:center;gap:8px">
+        ${statusBadge}
+        <button class="return-btn${ret?' is-returned':''}" onclick="toggleReturn(${p.id},${n})">${btnLabel}</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Returns tab ───────────────────────────────────────────────────────────────
+function filterReturns(f) {
+  returnsFilter = f;
+  ['all','out','returned'].forEach(k => {
+    const btn = document.getElementById('ret-filter-'+k);
+    btn.style.background = k === f ? 'var(--accent)' : '';
+    btn.style.color = k === f ? 'white' : '';
+    btn.style.borderColor = k === f ? 'transparent' : '';
+  });
+  renderReturns();
+}
+
+function renderReturns() {
+  const numMap = {};
+  pledges.forEach(p => p.numbers.forEach(n => { numMap[n] = p; }));
+  let nums = Object.keys(numMap).map(Number).sort((a,b) => a-b);
+
+  if (returnsFilter === 'out')      nums = nums.filter(n => !numMap[n].returned.includes(n));
+  if (returnsFilter === 'returned') nums = nums.filter(n =>  numMap[n].returned.includes(n));
+
+  const total     = Object.keys(numMap).length;
+  const retTotal  = pledges.reduce((s,p) => s+p.returned.length, 0);
+  document.getElementById('returns-count-label').textContent =
+    `${retTotal} of ${total} thaals returned · ${total - retTotal} still out`;
+
+  if (!nums.length) {
+    const msg = returnsFilter === 'all' ? 'No thaals assigned yet.' :
+                returnsFilter === 'out' ? 'All assigned thaals have been returned!' :
+                'No thaals marked as returned yet.';
+    document.getElementById('returns-tbody').innerHTML =
+      `<tr><td colspan="5"><div class="empty-state">${msg}</div></td></tr>`;
+    return;
+  }
+
+  document.getElementById('returns-tbody').innerHTML = nums.map(n => {
+    const p = numMap[n];
+    const ret = p.returned.includes(n);
+    const statusBadge = ret
+      ? '<span class="badge badge-green">Returned</span>'
+      : '<span class="badge badge-amber">Still Out</span>';
+    const btnLabel = ret ? '↩ Undo' : '✓ Mark returned';
+    return `<tr>
+      <td><span class="num-tag${ret?' returned':''}">#${n}</span></td>
+      <td class="name-cell">${esc(p.name)}</td>
+      <td class="email-cell">${esc(p.phone)}</td>
+      <td class="email-cell">${esc(p.email)}</td>
+      <td style="display:flex;align-items:center;gap:8px">
+        ${statusBadge}
+        <button class="return-btn${ret?' is-returned':''}" onclick="toggleReturn(${p.id},${n});renderReturns();renderMetrics();">${btnLabel}</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Return toggle ─────────────────────────────────────────────────────────────
+function toggleReturn(pledgeId, num) {
+  const p = pledges.find(x => x.id === pledgeId);
+  if (!p) return;
+  const idx = p.returned.indexOf(num);
+  if (idx > -1) p.returned.splice(idx, 1);
+  else          p.returned.push(num);
+  saveState();
+  render();
+}
+
+// ── Summary tab ───────────────────────────────────────────────────────────────
+function renderSummary() {
+  const top = [...pledges].sort((a,b) => b.count - a.count).slice(0, 10);
+  document.getElementById('top-pledgers').innerHTML = top.map((p, i) =>
+    `<div class="top-pledger">
+      <span class="pledger-rank">${i+1}</span>
+      <span class="pledger-name">${esc(p.name)}</span>
+      <span class="badge badge-blue">${p.count}</span>
+    </div>`
+  ).join('');
+
+  const byCount = {};
+  pledges.forEach(p => { byCount[p.count] = (byCount[p.count]||0) + 1; });
+  const maxVal = Math.max(...Object.values(byCount));
+  document.getElementById('breakdown').innerHTML = Object.entries(byCount)
+    .sort((a,b) => Number(a[0]) - Number(b[0]))
+    .map(([k,v]) => {
+      const pct = Math.round(v/maxVal*100);
+      return `<div class="breakdown-row">
+        <span class="breakdown-label">${k} thaal${k>1?'s':''}</span>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${pct}%"></div></div>
+        <span class="badge badge-gray">${v}</span>
+      </div>`;
+    }).join('');
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function render() {
+  renderMetrics();
+  if      (activeTab === 'pledges') renderPledges();
+  else if (activeTab === 'numbers') renderNumbers();
+  else if (activeTab === 'returns') renderReturns();
+  else                              renderSummary();
+}
+
+// ── Assign modal ──────────────────────────────────────────────────────────────
+let modalId = null;
+let selected = [];
+
+function openModal(id) {
+  modalId = id;
+  const p = pledges.find(x => x.id === id);
+  selected = [...p.numbers];
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-sub').textContent = `Pledged ${p.count} thaal${p.count>1?'s':''}`;
+  document.getElementById('modal-note').textContent =
+    `Select up to ${p.count} number${p.count>1?'s':''} to assign. Numbers taken by others are hidden.`;
+  const avail = availableFor(p);
+  document.getElementById('num-picker').innerHTML = avail.map(n =>
+    `<button class="num-option${selected.includes(n)?' selected':''}" onclick="toggleNum(${n},this)">#${n}</button>`
+  ).join('');
+  document.getElementById('assign-modal').classList.add('open');
+}
+
+function toggleNum(n, el) {
+  const p = pledges.find(x => x.id === modalId);
+  const idx = selected.indexOf(n);
+  if (idx > -1) { selected.splice(idx, 1); el.classList.remove('selected'); }
+  else {
+    if (selected.length >= p.count) {
+      const first = selected.shift();
+      document.querySelectorAll('.num-option').forEach(b => {
+        if (b.textContent === '#'+first) b.classList.remove('selected');
+      });
+    }
+    selected.push(n); el.classList.add('selected');
+  }
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('assign-modal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('assign-modal').classList.remove('open');
+  modalId = null; selected = [];
+}
+
+function confirmAssign() {
+  if (modalId === null) return;
+  const p = pledges.find(x => x.id === modalId);
+  const newNumbers = [...selected].sort((a,b) => a-b);
+  // Remove return status for any numbers that were de-assigned
+  const removed = p.numbers.filter(n => !newNumbers.includes(n));
+  p.returned = p.returned.filter(n => !removed.includes(n));
+  p.numbers = newNumbers;
+  saveState();
+  closeModalDirect();
+  render();
+}
+
+// ── Export ────────────────────────────────────────────────────────────────────
+function openExport() {
+  const header = 'Name,Email,Phone,Thaals Pledged,Assigned Numbers,Returned Numbers,Assignment Status,Return Status';
+  const rows = pledges.map(p => {
+    const full    = p.numbers.length >= p.count;
+    const partial = p.numbers.length > 0 && !full;
+    const assignStatus = full ? 'Assigned' : partial ? 'Partial' : 'Pending';
+    const retCount = p.returned.length;
+    const retStatus = p.numbers.length === 0 ? 'N/A'
+      : retCount === p.numbers.length ? 'All Returned'
+      : retCount > 0 ? 'Partially Returned'
+      : 'Not Returned';
+    return [
+      `"${p.name}"`,
+      `"${p.email}"`,
+      `"${p.phone}"`,
+      p.count,
+      `"${p.numbers.join(', ')}"`,
+      `"${p.returned.join(', ')}"`,
+      assignStatus,
+      retStatus
+    ].join(',');
+  });
+  document.getElementById('export-area').value = [header, ...rows].join('\n');
+  document.getElementById('export-modal').classList.add('open');
+}
+function closeExportModal(e) {
+  if (!e || e.target === document.getElementById('export-modal'))
+    document.getElementById('export-modal').classList.remove('open');
+}
+function copyCSV() {
+  const ta = document.getElementById('export-area');
+  ta.select();
+  document.execCommand('copy');
+  const btn = document.querySelector('#export-modal .btn-accent');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+filterReturns('all');
+render();
+</script>
+</body>
+</html>
