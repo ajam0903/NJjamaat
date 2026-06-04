@@ -37,243 +37,127 @@
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1a1510;
-      --surface: #231e18;
-      --surface2: #2e2820;
-      --border: rgba(255,220,180,0.1);
-      --border-strong: rgba(255,220,180,0.2);
-      --text: #f0e8dc;
-      --text2: #b8a898;
-      --text3: #7a6858;
-      --accent: #e07840;
-      --accent-light: #3a2215;
-      --accent-dark: #f09060;
-      --green: #74c69d;
-      --green-light: #1b3a2a;
-      --amber: #ffc107;
-      --amber-light: #332600;
-      --blue: #74aee8;
-      --blue-light: #0d2544;
-      --red: #f87171;
-      --red-light: #3a1010;
+      --bg: #1a1510; --surface: #231e18; --surface2: #2e2820;
+      --border: rgba(255,220,180,0.1); --border-strong: rgba(255,220,180,0.2);
+      --text: #f0e8dc; --text2: #b8a898; --text3: #7a6858;
+      --accent: #e07840; --accent-light: #3a2215; --accent-dark: #f09060;
+      --green: #74c69d; --green-light: #1b3a2a;
+      --amber: #ffc107; --amber-light: #332600;
+      --blue: #74aee8; --blue-light: #0d2544;
+      --red: #f87171; --red-light: #3a1010;
     }
   }
 
   html { font-size: 16px; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 400; line-height: 1.6; min-height: 100vh; }
 
-  /* ── Header ── */
-  .site-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    gap: 1rem;
-  }
+  .site-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 50; }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 1rem; }
   .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .logo-icon svg { width: 18px; height: 18px; fill: white; }
   .logo-text { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); letter-spacing: -0.3px; }
   .logo-sub { font-size: 11px; color: var(--text3); margin-left: 4px; }
-  .header-actions { display: flex; gap: 8px; align-items: center; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: var(--radius);
-    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500;
-    cursor: pointer; border: 1px solid var(--border-strong);
-    background: var(--surface); color: var(--text2);
-    transition: all 0.15s; text-decoration: none;
-  }
+
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); transition: all 0.15s; }
   .btn:hover { background: var(--surface2); color: var(--text); }
   .btn-accent { background: var(--accent); color: white; border-color: transparent; }
   .btn-accent:hover { background: var(--accent-dark); color: white; }
-  .btn-green { background: var(--green); color: white; border-color: transparent; }
-  .btn-green:hover { background: #1f5038; color: white; }
   .btn svg { width: 14px; height: 14px; }
 
-  /* ── Layout ── */
-  .main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 
   /* ── Metrics ── */
-  .metrics-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 1.5rem;
-  }
-  .metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    box-shadow: var(--shadow);
-    animation: fadeUp 0.4s ease both;
-  }
-  .metric-card:nth-child(1) { animation-delay: 0.05s; }
-  .metric-card:nth-child(2) { animation-delay: 0.10s; }
-  .metric-card:nth-child(3) { animation-delay: 0.15s; }
-  .metric-card:nth-child(4) { animation-delay: 0.20s; }
-  .metric-card:nth-child(5) { animation-delay: 0.25s; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 1.5rem; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
+  .metric-card:nth-child(1){animation-delay:.05s} .metric-card:nth-child(2){animation-delay:.1s} .metric-card:nth-child(3){animation-delay:.15s} .metric-card:nth-child(4){animation-delay:.2s}
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   .metric-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
   .metric-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text); line-height: 1; }
   .metric-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
 
-  /* ── Progress bars ── */
-  .progress-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
+  /* ── Progress ── */
+  .progress-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   @media (max-width: 600px) { .progress-section { grid-template-columns: 1fr; } }
-  .progress-item {}
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .progress-header span { font-size: 13px; font-weight: 500; color: var(--text2); }
   .progress-track { height: 10px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 99px; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
-  .progress-fill-accent { background: var(--accent); }
-  .progress-fill-green { background: var(--green); }
+  .pf-accent { background: var(--accent); }
+  .pf-green  { background: var(--green); }
 
   /* ── Tabs ── */
-  .tabs {
-    display: flex; gap: 4px; margin-bottom: 1.25rem;
-    background: var(--surface2); padding: 4px;
-    border-radius: var(--radius); width: fit-content;
-  }
-  .tab-btn {
-    padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 500;
-    cursor: pointer; border: none; background: transparent; color: var(--text2);
-    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
-  }
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; background: var(--surface2); padding: 4px; border-radius: var(--radius); width: fit-content; }
+  .tab-btn { padding: 7px 18px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
   /* ── Toolbar ── */
   .toolbar { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
   .search-wrap { position: relative; flex: 1; min-width: 200px; }
-  .search-wrap svg {
-    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-    width: 15px; height: 15px; color: var(--text3); pointer-events: none;
-  }
-  .search-input {
-    width: 100%; padding: 8px 12px 8px 32px;
-    border: 1px solid var(--border-strong); border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s;
-  }
+  .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text3); pointer-events: none; }
+  .search-input { width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s; }
   .search-input:focus { border-color: var(--accent); }
-  .filter-select {
-    padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; cursor: pointer;
-  }
+  .filter-select { padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; cursor: pointer; }
 
   /* ── Table ── */
   .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
   .table-scroll { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  thead th {
-    text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--text3);
-    padding: 12px 16px; background: var(--surface2);
-    border-bottom: 1px solid var(--border); white-space: nowrap;
-  }
+  thead th { text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th.sortable:hover { color: var(--text2); }
+  thead th.sorted { color: var(--accent); }
+  .sort-ind { display: inline-block; margin-left: 4px; font-size: 10px; opacity: 0.7; }
   tbody tr { transition: background 0.1s; }
   tbody tr:hover { background: var(--surface2); }
-  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
+  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tbody tr:last-child td { border-bottom: none; }
   .name-cell { font-weight: 500; }
-  .email-cell { color: var(--text3); font-size: 12px; }
+  .dim { color: var(--text3); font-size: 12px; }
 
   /* ── Badges ── */
-  .badge {
-    display: inline-block; font-size: 11px; font-weight: 500;
-    padding: 3px 9px; border-radius: 99px; white-space: nowrap;
-  }
-  .badge-blue   { background: var(--blue-light);  color: var(--blue); }
-  .badge-green  { background: var(--green-light); color: var(--green); }
-  .badge-amber  { background: var(--amber-light); color: var(--amber); }
-  .badge-gray   { background: var(--surface2);    color: var(--text3); border: 1px solid var(--border); }
-  .badge-red    { background: var(--red-light);   color: var(--red); }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+  .badge-blue  { background: var(--blue-light);  color: var(--blue); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-gray  { background: var(--surface2);    color: var(--text3); border: 1px solid var(--border); }
 
-  /* ── Thaal number tags ── */
-  .num-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-  .num-tag {
-    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px;
-    font-family: 'DM Sans', monospace;
-    background: var(--accent-light); color: var(--accent-dark);
-    border: 1px solid rgba(184,92,42,0.2);
-  }
-  .num-tag.returned {
-    background: var(--green-light); color: var(--green);
-    border-color: rgba(45,106,79,0.25);
-    text-decoration: line-through;
-    opacity: 0.7;
-  }
-  .assign-btn {
-    font-size: 12px; padding: 4px 10px; border-radius: 7px; cursor: pointer;
-    border: 1px dashed var(--border-strong); background: transparent; color: var(--text3);
-    font-family: 'DM Sans', sans-serif; transition: all 0.15s;
-    display: inline-flex; align-items: center; gap: 4px;
-  }
+  /* ── Number tag ── */
+  .num-tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 7px; font-family: 'DM Sans', monospace; background: var(--accent-light); color: var(--accent-dark); border: 1px solid rgba(184,92,42,0.25); display: inline-block; }
+  .num-tag.returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.25); text-decoration: line-through; opacity: 0.75; }
+
+  /* ── Number input ── */
+  .num-input-wrap { display: flex; flex-direction: column; gap: 3px; }
+  .num-input-row  { display: flex; align-items: center; gap: 6px; }
+  .num-input { width: 90px; padding: 5px 10px; border: 1.5px solid var(--accent); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', monospace; font-size: 13px; font-weight: 600; outline: none; }
+  .num-input-hint { font-size: 11px; color: var(--text3); }
+  .num-input-err  { font-size: 11px; color: var(--red); }
+
+  /* ── Count input ── */
+  .count-input { width: 52px; padding: 3px 8px; border: 1.5px solid var(--accent); border-radius: 8px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; text-align: center; outline: none; }
+  .count-badge-edit { cursor: pointer; }
+  .count-badge-edit:hover { opacity: 0.75; }
+
+  /* ── Action buttons ── */
+  .assign-btn { font-size: 12px; padding: 4px 10px; border-radius: 7px; cursor: pointer; border: 1px dashed var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px; }
   .assign-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-  .edit-btn {
-    font-size: 11px; padding: 3px 7px; border-radius: 6px; cursor: pointer;
-    border: 1px solid var(--border); background: transparent; color: var(--text3);
-    font-family: 'DM Sans', sans-serif; margin-left: 4px; transition: all 0.15s;
-  }
+  .edit-btn { font-size: 11px; padding: 3px 7px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .cancel-btn { font-size: 11px; padding: 3px 7px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .cancel-btn:hover { border-color: var(--red); color: var(--red); }
 
-  /* ── Return toggle button ── */
-  .return-btn {
-    font-size: 11px; padding: 4px 10px; border-radius: 7px; cursor: pointer;
-    border: 1px solid var(--border-strong); background: transparent;
-    color: var(--text3); font-family: 'DM Sans', sans-serif;
-    transition: all 0.15s; white-space: nowrap;
-  }
+  /* ── Return button ── */
+  .return-btn { font-size: 11px; padding: 4px 10px; border-radius: 7px; cursor: pointer; border: 1px solid var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
   .return-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-  .return-btn.is-returned {
-    background: var(--green-light); color: var(--green);
-    border-color: rgba(45,106,79,0.35);
-  }
-  .return-btn.is-returned:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+  .return-btn.is-returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.35); font-weight: 500; }
+  .return-btn.is-returned:hover { background: var(--green-light); opacity: 0.75; }
 
   /* ── Empty state ── */
   .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
   .empty-state p { margin-top: 8px; font-size: 13px; }
 
-  /* ── Summary tab ── */
-  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  /* ── Summary ── */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; }
   @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
   .summary-section { padding: 1.5rem; }
   .summary-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 1rem; color: var(--text); }
@@ -281,70 +165,51 @@
   .top-pledger:last-child { border-bottom: none; }
   .pledger-rank { font-size: 11px; font-weight: 500; color: var(--text3); width: 20px; }
   .pledger-name { flex: 1; font-size: 13px; font-weight: 500; }
-  .breakdown-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px;
-  }
+  .breakdown-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; gap: 8px; }
   .breakdown-row:last-child { border-bottom: none; }
-  .breakdown-label { color: var(--text2); }
-  .breakdown-bar-wrap { flex: 1; margin: 0 12px; height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .breakdown-label { color: var(--text2); width: 72px; flex-shrink: 0; }
+  .breakdown-bar-wrap { flex: 1; height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
   .breakdown-bar { height: 100%; background: var(--accent); border-radius: 99px; }
 
   /* ── Modal ── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); z-index: 200;
-    align-items: center; justify-content: center;
-    padding: 1rem; backdrop-filter: blur(2px);
-  }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(2px); }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface); border-radius: var(--radius-lg);
-    border: 1px solid var(--border-strong); padding: 1.75rem;
-    width: 100%; max-width: 420px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-    animation: modalIn 0.2s cubic-bezier(0.16,1,0.3,1);
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal-header { margin-bottom: 4px; }
-  .modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-strong); padding: 1.75rem; width: 100%; max-width: 560px; box-shadow: 0 8px 40px rgba(0,0,0,0.2); animation: modalIn 0.2s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.95) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 4px; }
   .modal-sub { font-size: 13px; color: var(--text3); margin-bottom: 1rem; }
-  .num-picker {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    max-height: 200px; overflow-y: auto; margin-bottom: 1rem; padding: 2px;
-  }
-  .num-option {
-    font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 8px;
-    border: 1px solid var(--border-strong); cursor: pointer;
-    background: var(--surface); color: var(--text2);
-    font-family: 'DM Sans', monospace; transition: all 0.12s; user-select: none;
-  }
-  .num-option:hover { border-color: var(--accent); color: var(--accent); }
-  .num-option.selected { background: var(--accent); border-color: var(--accent); color: white; }
-  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal-note { font-size: 12px; color: var(--text3); margin-bottom: 1rem; padding: 8px 12px; background: var(--surface2); border-radius: var(--radius); }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
+  .export-area { width: 100%; height: 200px; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 10px; font-family: monospace; font-size: 12px; background: var(--surface2); color: var(--text); resize: none; }
 
-  /* ── Export modal ── */
-  .export-area {
-    width: 100%; height: 200px;
-    border: 1px solid var(--border-strong); border-radius: var(--radius);
-    padding: 10px; font-family: monospace; font-size: 12px;
-    background: var(--surface2); color: var(--text); resize: none;
-  }
+  /* ── Name cell sub-info ── */
+  .name-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  /* ── Section header with action ── */
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  /* ── Add-pledge form ── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); }
+  .form-input { padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color .15s; }
+  .form-input:focus { border-color: var(--accent); }
+  /* Autocomplete */
+  .ac-wrap { position: relative; }
+  .ac-list { position: absolute; top: calc(100% + 3px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius); box-shadow: var(--shadow); max-height: 220px; overflow-y: auto; z-index: 300; }
+  .ac-item { padding: 8px 12px; font-size: 13px; cursor: pointer; border-bottom: 1px solid var(--border); }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.ac-active { background: var(--accent-light); color: var(--accent-dark); }
+  .ac-item-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
 
   /* ── Responsive ── */
   @media (max-width: 680px) {
     .main { padding: 1rem; }
     .site-header { padding: 0 1rem; }
     .logo-text { font-size: 17px; }
-    table { font-size: 12.5px; }
-    thead th, tbody td { padding: 9px 10px; }
+    .logo-sub { display: none; }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 9px 8px; }
+    .name-cell { max-width: 140px; }
+    .name-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+    .num-input { width: 72px; }
   }
 </style>
 </head>
@@ -353,13 +218,11 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.6 2 10c0 2.4 1.2 4.5 3 6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8S17.5 2 12 2z"/></svg>
-      </div>
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.6 2 10c0 2.4 1.2 4.5 3 6V21l3.5-2c1.1.3 2.3.5 3.5.5 5.5 0 10-3.6 10-8S17.5 2 12 2z"/></svg></div>
       <span class="logo-text">Thaal Tracker</span>
       <span class="logo-sub">NJ Jamaat · Muharram 1447</span>
     </div>
-    <div class="header-actions">
+    <div>
       <button class="btn" onclick="openExport()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
         Export CSV
@@ -372,116 +235,52 @@
   <div class="metrics-row" id="metrics-row"></div>
 
   <div class="progress-section">
-    <div class="progress-item">
+    <div>
       <div class="progress-header">
-        <span id="assign-progress-label">Assignment progress</span>
-        <span id="assign-progress-pct" style="font-weight:600;color:var(--accent)">0%</span>
+        <span id="num-progress-label">Numbering progress</span>
+        <span id="num-progress-pct" style="font-weight:600;color:var(--accent)">0%</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill progress-fill-accent" id="assign-progress-fill" style="width:0%"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill pf-accent" id="num-progress-fill" style="width:0%"></div></div>
     </div>
-    <div class="progress-item">
+    <div>
       <div class="progress-header">
-        <span id="return-progress-label">Return progress</span>
-        <span id="return-progress-pct" style="font-weight:600;color:var(--green)">0%</span>
+        <span id="ret-progress-label">Return progress</span>
+        <span id="ret-progress-pct" style="font-weight:600;color:var(--green)">0%</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill progress-fill-green" id="return-progress-fill" style="width:0%"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill pf-green" id="ret-progress-fill" style="width:0%"></div></div>
     </div>
   </div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('pledges',this)">Pledges</button>
-    <button class="tab-btn" onclick="switchTab('numbers',this)">By Number</button>
-    <button class="tab-btn" onclick="switchTab('returns',this)">Returns</button>
     <button class="tab-btn" onclick="switchTab('summary',this)">Summary</button>
   </div>
 
   <div class="toolbar" id="toolbar">
+    <button class="btn btn-accent" onclick="openAddPledge()">+ Add Pledge</button>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input class="search-input" id="search" type="text" placeholder="Search by name, email, or thaal #…" oninput="render()">
+      <input class="search-input" id="search" type="text" placeholder="Search by name, email, or #…" oninput="render()">
     </div>
-    <select class="filter-select" id="filter" onchange="render()">
-      <option value="all">All</option>
-      <option value="pending">Unassigned</option>
-      <option value="partial">Partially assigned</option>
-      <option value="done">Fully assigned</option>
-      <option value="returned">All returned</option>
-      <option value="not-returned">Not fully returned</option>
-    </select>
   </div>
 
   <!-- Pledges tab -->
   <div id="tab-pledges">
-    <div class="table-card">
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Pledged</th>
-              <th>Thaal Numbers</th>
-              <th>Returned</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="pledge-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- By Number tab -->
-  <div id="tab-numbers" style="display:none">
-    <div class="table-card">
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Thaal #</th>
-              <th>Owner</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Return Status</th>
-            </tr>
-          </thead>
-          <tbody id="numbers-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Returns tab -->
-  <div id="tab-returns" style="display:none">
-    <div class="section-header">
-      <div style="font-size:13px;color:var(--text3)" id="returns-count-label"></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="filterReturns('all')" id="ret-filter-all">All</button>
-        <button class="btn" onclick="filterReturns('out')" id="ret-filter-out">Still Out</button>
-        <button class="btn" onclick="filterReturns('returned')" id="ret-filter-returned">Returned</button>
-      </div>
-    </div>
-    <div class="table-card">
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Thaal #</th>
-              <th>Owner</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>Return Status</th>
-            </tr>
-          </thead>
-          <tbody id="returns-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+    <div class="table-card"><div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>
+            <span class="sortable" onclick="sortBy('first-name')" id="th-first-name" style="text-transform:uppercase;font-size:11px;letter-spacing:.06em">First <span class="sort-ind" id="si-first-name"></span></span>
+            <span style="color:var(--border-strong);margin:0 3px">/</span>
+            <span class="sortable" onclick="sortBy('last-name')" id="th-last-name" style="text-transform:uppercase;font-size:11px;letter-spacing:.06em">Last <span class="sort-ind" id="si-last-name"></span></span>
+          </th>
+          <th class="sortable" onclick="sortBy('count')" id="th-count">Thaals <span class="sort-ind" id="si-count"></span></th>
+          <th class="sortable" onclick="sortBy('num')" id="th-num">Number <span class="sort-ind" id="si-num"></span></th>
+          <th class="sortable" onclick="sortBy('returned')" id="th-returned">Returned <span class="sort-ind" id="si-returned"></span></th>
+        </tr></thead>
+        <tbody id="pledge-tbody"></tbody>
+      </table>
+    </div></div>
   </div>
 
   <!-- Summary tab -->
@@ -489,41 +288,64 @@
     <div class="table-card">
       <div class="summary-grid">
         <div class="summary-section" style="border-right:1px solid var(--border)">
-          <div class="summary-title">Largest pledges</div>
-          <div id="top-pledgers"></div>
-        </div>
-        <div class="summary-section">
           <div class="summary-title">Pledge breakdown</div>
           <div id="breakdown"></div>
+        </div>
+        <div class="summary-section">
+          <div class="summary-title">Largest pledges</div>
+          <div id="top-pledgers"></div>
         </div>
       </div>
     </div>
   </div>
 </main>
 
-<!-- Assign modal -->
-<div class="modal-overlay" id="assign-modal" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-name"></div>
-      <div class="modal-sub" id="modal-sub"></div>
+<!-- Add Pledge modal -->
+<div class="modal-overlay" id="add-modal" onclick="closeAddModal(event)">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Add Pledge</div>
+    <div class="modal-sub">Search the directory or enter details manually.</div>
+    <div class="form-row" style="margin-bottom:12px">
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Name</label>
+        <div class="ac-wrap">
+          <input class="form-input" id="ap-name" type="text" placeholder="Start typing a name…"
+            autocomplete="off" oninput="acUpdate()" onkeydown="acKey(event)">
+          <div class="ac-list" id="ac-list" style="display:none"></div>
+        </div>
+      </div>
     </div>
-    <div class="modal-note" id="modal-note"></div>
-    <div class="num-picker" id="num-picker"></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="ap-email" type="email" placeholder="email@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" id="ap-phone" type="tel" placeholder="732-000-0000">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Thaals pledged</label>
+        <input class="form-input" id="ap-count" type="number" min="1" max="50" value="1" style="width:90px">
+      </div>
+    </div>
+    <div id="ap-err" style="font-size:12px;color:var(--red);margin-bottom:8px;min-height:16px"></div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModalDirect()">Cancel</button>
-      <button class="btn btn-accent" onclick="confirmAssign()">Save assignment</button>
+      <button class="btn" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="submitAddPledge()">Add Pledge</button>
     </div>
   </div>
 </div>
 
 <!-- Export modal -->
 <div class="modal-overlay" id="export-modal" onclick="closeExportModal(event)">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-title" style="margin-bottom:8px;font-family:'DM Serif Display',serif;font-size:20px">Export data</div>
+  <div class="modal">
+    <div class="modal-title">Export data</div>
     <div class="modal-sub">Copy the CSV below and paste into Excel or Google Sheets.</div>
     <textarea class="export-area" id="export-area" readonly></textarea>
-    <div class="modal-footer" style="margin-top:1rem">
+    <div class="modal-footer">
       <button class="btn" onclick="closeExportModal()">Close</button>
       <button class="btn btn-accent" onclick="copyCSV()">Copy to clipboard</button>
     </div>
@@ -531,6 +353,9 @@
 </div>
 
 <script>
+// ── Directory (for autocomplete) ─────────────────────────────────────────────
+const DIRECTORY = [["Aamir Kagalwalla","732-492-7397","arshadsk@hotmail.com"],["Aamir Udaipurwala","609-498-4740","audaipurwala110@gmail.com"],["Abbas Bagasrawala","201-841-6619","abbastayabb@gmail.com"],["Abbas Bhinderwalla","609-480-5802","abbas.bhinderwala@gmail.com"],["Abbas bs Hamdani","201-916-7523","hamdaniabbas@gmail.com"],["Abbas Cutlerywalla","732-762-6427","cutlerywalaabbas8@gmail.com"],["Abbas Godhrawala","551-655-3614","abbasgodhrawala2012@gmail.com"],["Abbas Haidery","732-325-8136","haidery75@aol.com"],["Abbas Halwadwala(Ismail)","848-239-7444","abbas.ismail28@yahoo.com"],["Abbas Lokhandwala","609-257-7346","abbasi_07@hotmail.com"],["Abbas Saylawala","617-407-1070","abbassaylawala@gmail.com"],["Abbas Zariwala","315-378-9880","abbas63@gmail.com"],["Abbasali Kera","646-258-0628","abbasalikera@gmail.com"],["Abdeali Bangawala","732-737-5567","bangawala52@gmail.com"],["Abdeali Singaporewala","732-393-2400","abdeali_sp@hotmail.com"],["Abdul Kadir Olia","408-674-2867","abdulkadirolia@gmail.com"],["Abdullah(Antonio) Betances","201-925-5640","umesz4790@gmail.com"],["Abdulqadir Lashkarwala","267-475-9098","lashkarwala@gmail.com"],["Abid Jamali","201-888-7975","abidjamali@aol.com"],["Abul Hassan Fatemi","862-372-9953","abulhassanfatemi609@gmail.com"],["Abuzer Mukadam","973-979-9013","zehra.mukadam@gmail.com"],["Adnan Abbasali(Jamnagarwala)","732-915-4391","adnan.abbasali@yahoo.com"],["Adnan Jamali","201-982-3292","aali180@gmail.com"],["Adnan Rangila","973-641-6426","arangila@hotmail.com"],["Adnan Saifee","201-270-8019","adnan.saifee@gmail.com"],["Ahmed Bikanerwala","678-777-0074","akhter.bikanerwala@gmail.com"],["Ahmedali Lokhandwala","","ahmedali4u@gmail.com"],["Akil Saleh","718-790-2937","akil.saleh@gmail.com"],["Alee Adnan Ali","732-491-3985","ilaeela@gmail.com"],["Ali asghar Jamali","201-281-0194","ajamali0903@gmail.com"],["Ali Asghar Karimi","732-875-9760","aliasgharakbarali399@gmail.com"],["Ali Taiyebi","732-986-7731","taiyebi@yahoo.com"],["Aliasgar Gangardiwala","856-397-9117","aliasgarg@gmail.com"],["Aliasgar Ghasletwala","609-510-4298","armariam@gmail.com"],["Aliasgar Italiwala","732-476-9445","aitaliwala@gmail.com"],["Aliasgar Najmi(Nalwala)","848-216-1753","husseinsboy@gmail.com"],["Aliasger Neemuchwala","848-219-9080","aeneemuchwala@hotmail.com"],["Ameer Ali Sabir","201-952-5352","mssabir786@gmail.com"],["Arwa Hussain","585-754-7724","arwa0327@gmail.com"],["Asad Gunawala(Ali)","201-708-5042","asad.ee@gmail.com"],["Asif Gandhi","732-991-6999","gandhihome@hotmail.com"],["Atif Zohair Qadir","917-531-2602","atifqadir@gmail.com"],["Aun Ali Jamali","732-259-8756","aunali81@gmail.com"],["Aziz Vohra","857-381-6386","aziz.muslim.vohra@gmail.com"],["Burhanuddin Petiwala","551-368-9565","burhanp1300@gmail.com"],["Danyal Veith","717-989-2711","dev6500@gmail.com"],["Ebrahim Faizullabhoy","404-252-9655","ebrahim.faizullabhoy@gmail.com"],["Ebrahim Zanzi","201-647-5764","abezanzi1@gmail.com"],["Esmael Rangoonwala","732-489-2676","rehana.rangoonwala@gmail.com"],["Farhan Ali","617-372-3672","jumana.dahodwala@gmail.com"],["Farheen Qadir","862-220-7305","qadirfarheen@gmail.com"],["Farida Ghadiali","732-673-5634","fghadiali@gmail.com"],["Farzad Chinwala","973-615-3563","farzadchinwala@gmail.com"],["Fatema Zakir","732-522-4050","jazakir@gmail.com"],["Firoz Barot","908-531-5866","firozfareeda@gmail.com"],["Firoz Wadia","732-668-7394","rashidapm@y7mail.com"],["Gulamhussein Janoowalla","973-632-0116","Gulam.Janoo@gmail.com"],["Hakimuddin Hussain(Saudagar)","408-784-8638","hakhussa167@gmail.com"],["Hakimuddin Jamnagarwala","732-925-6438","hakimuddinhusaini7@gmail.com"],["Hakimudin Shamshudin","732-261-3618","shenazshamshudin@gmall.com"],["Hasan Mithiborwala","682-232-9997","unicornw7@gmail.com"],["Hashim Chittalwala","732-781-5242","hashimsc@gmail.com"],["Hashim Mithaiwala","732-647-6257","hashim36@yahoo.com"],["Hatim Bharmal","609-356-4291","hbharm@gmail.com"],["Hatim(Akhtar) Bhinderwalla","917-445-2330","akhtar.sb@gmail.com"],["Hozaifa Cassubhai","206-617-7029","hcassubhai@gmail.com"],["Hozefa Moyyadi","929-287-4080","hozefa.moyaddi@gmail.com"],["Hozefa Zariwala","917-624-0321","hozefa.s.zariwala@gmail.com"],["Hunaid Engineer","201-951-9176","hunaidengineer@gmail.com"],["Hunaid Haider","201-250-1063","Hunaid.haider@gmail.com"],["Husain Baiwala","732-215-8432","husainbaiwala@gmail.com"],["Husain Dhinojwala","678-230-1205","husain2ryme@yahoo.co.in"],["Husain Ghasletwala","609-865-0811","mhrs1526@gmail.com"],["Husain Kanchwala","619-212-6941","husain.kanchwala66@gmail.com"],["Husain Tayeb","732-858-2260","sakina.h.tayeb@hotmail.com"],["Husein Chhatriwala","908-528-2138","husein.chhatriwala@gmail.com"],["Hussain Badri","848-391-5239","badri.hussain@gmail.com"],["Hussain Bootwala","570-677-9786","hbootwala@gmail.com"],["Hussain Darbar","908-787-6456","hdarbar786@gmail.com"],["Hussain Kapadia","201-208-9842","kapadiahussain@gmail.com"],["Hussain Karimee","732-822-0707","husainkarimee@gmail.com"],["Hussain Khandwala","631-590-0322","hussainkhandwala@gmail.com"],["Hussain Sabir","732-570-7914","Pearlj5152@yahoo.com"],["Hussain Singaporewala","646-267-4869","hussain.hys53@gmail.com"],["Huzaifa Bandookwala","646-898-6908","huzefabandookwala786@gmail.com"],["Huzaifa Matawala","848-467-1159","huzaifamat@gmail.com"],["Huzaifah Basrai","201-233-4970","basrai@gmail.com"],["Huzefa Harnesswala","917-941-5127","huzefaharness@gmail.com"],["Huzefa Mahuwala","848-287-7536","huzefa_zoaib2000@yahoo.com"],["Huzefa Olia","323-202-0077","huzefa@gmail.com"],["Huzefa Pancha","845-264-2967","huzefa.pancha@gmail.com"],["Huzefa Qubbawala","732-910-9753","huzefa.qubbawala@gmail.com"],["Huzefa Rehmanji","848-219-4382","hrehmanji@yahoo.com"],["Huzeifa Nasir","732-599-1976","hozefa786@gmail.com"],["Ibrahim Dalal","346-615-3625","sfinae@protonmail.com"],["Ibrahim Patanwala","201-889-0505","rasheeda.hakim@gmail.com"],["Idrees Kanchwala","929-422-7970","idrees5153@gmail.com"],["Idris Baxamusa","530-282-5115","idris.baxamusa@gmail.com"],["Idris Khazanchi","908-812-6759","idris.khajanchi@gmail.com"],["Imtiaz Haji","609-658-7856","rashidahaji@yahoo.com"],["Jamila Ali","732-713-5095","jamila.burhanpurwala@gmail.com"],["Jujar Khuzema Merchant","917-345-3850","jujar.merchant@gmail.com"],["Juzer Chandabhai","732-766-9495","juzerali54@gmail.com"],["Juzer Merchant","609-240-2206","zuzar00@yahoo.com"],["Juzer Mohammedshah","973-204-8129","zoebsdad@gmail.com"],["Juzer Rasani","518-669-7363","jrasani@gmail.com"],["Juzer Tohfafarosh","646-345-6926","juzer.s.tohfafarosh@gmail.com"],["Kaneez Darbar","973-632-7059","kdarbar@comcast.net"],["Kaneez Fatema Madraswalla","908-514-6370","kaneezm@gmail.com"],["Khadija Sitabkhan","201-410-8182","khatakhan315@gmail.com"],["Khalid Dalvi","732-429-2067","funkaar786@aol.com"],["Khojim Fatakdawala","732-586-9436","khojims@gmail.com"],["Khozem Kharawalla","732-429-7557","khozem_k@yahoo.com"],["Khuzaima Tapya","732-993-8271","ktapya@yahoo.com"],["Khuzema Batawala","732-692-0397","khuzem@hotmail.com"],["Kumail Bandukwala","732-783-8083","kumailbandukwala@gmail.com"],["Lulua Khambaty","201-694-6854","lkhambaty@yahoo.com"],["Luluva Channiwala","551-235-5343","luluvachanniwala@gmail.com"],["Maad Merchant","732-668-4292","maadmerchant@gmail.com"],["Mansoor Dhanerawala","609-424-7070","mansoorid@hotmail.com"],["Mansoor Kalyanwala","609-721-1451","mkalyanw@gmail.com"],["Mansoor Tayebaly","609-448-5947","nartayeb@yahoo.com"],["Mariam Kapadia","908-477-5232","kapadiamariambai@gmail.com"],["Marium Tapal","413-270-2841","mariumtapal@gmail.com"],["Mariya Tohfafarosh","973-687-7083","mariyatohfafarosh23@gmail.com"],["Mazahar Dhrolia","732-241-7655","mazahardhrolia@gmail.com"],["Mazhar Sadikot","515-779-2763","dolly.sadikot@gmail.com"],["Mehfuza Mukadam","973-557-1266","Mehfuz38@hotmail.com"],["Mehra Madraswalla","609-529-1005","mehrataher@gmail.com"],["Mohamed Darbar","732-230-3286","mdarbar@comcast.net"],["Mohammad Chandabhai","732-277-2526","nafisachandabhai@hotmail.com"],["Mohammad Rasani","919-949-9500","mrasani52@gmail.com"],["Mohammed Bharmal","732-306-0493","mohammed.bharmal@gmail.com"],["Mohammed Daginawala","646-431-0712","moham316@gmail.com"],["Mohammed Dhanaliwala","908-500-0851","msdhanaliwala@gmail.com"],["Mohammed Haidri","732-823-7065","m3haidri@gmail.com"],["Mohammed Partapurwala","718-564-9222","mohammed.partapurwala@gmail.com"],["Mohammed Petiwala","770-249-7876","mohdpeti0405@gmail.com"],["Mohammed Tapia","848-702-2620","nazimtapia@hotmail.com"],["Mohammedi Habib","786-397-4547","mhdhabib80@yahoo.com"],["Mohammedi Kanpurwala","609-647-2676","mhkanpurwala@yahoo.com"],["Mohsin Ali Madraswala","908-494-1689","mohsin_ali74@hotmail.com"],["Mohsin Bahrainwalla","917-596-3480","mohsinb@yahoo.com"],["Moiz Flasiyawala","651-500-6979","hussain.mumtaz@gmail.com"],["Moiz Hakimi","609-865-2952","hakimi.moiz@gmail.com"],["Moiz Masawi","856-520-9896","mimasawi@gmail.com"],["Muder Kothawala","215-688-1912","muderkh@hotmail.com"],["Munira Shakruwala(Ali)","732-241-5048","moonira@gmail.com"],["Murtaza Adenwala","908-538-1211","murtuza.adenwala@gmail.com"],["Murtaza Attaar","732-241-3192","murtuzaattaar@gmail.com"],["Murtaza Azad","201-920-5786","murtazad@gmail.com"],["Murtaza Badshah","732-881-2786","murtuza.badshah5@gmail.com"],["Murtaza Bandukwala","518-567-6839","murtaza.hussain82@gmail.com"],["Murtaza Bangawala","732-371-2588","murtaza.abdeali@gmail.com"],["Murtaza Baxamusa","732-241-7873","mmayub4@gmail.com"],["Murtaza Chinwala","914-815-1494","murtaza_aac@protonmail.com"],["Murtaza Divasali","650-521-2575","murtazakd@gmail.com"],["Murtaza Hathiyari","410-330-9953","murtaza.hathiyari72@gmail.com"],["Murtaza Jaorawala","479-657-0467","murtuzaj786@gmail.com"],["Murtaza Jawrawala","505-227-3850","murtaza.jawrawala@gmail.com"],["Murtaza Kharawalla","917-400-3471","murtz_k@rediffmail.com"],["Murtaza Khorakiwala","201-394-2937","murtazayk@yahoo.com"],["Murtaza Kothari","732-822-5824","mtazshab@gmail.com"],["Murtaza Mahuvawala","201-884-0775","murtaza.mahuva@gmail.com"],["Murtaza Mandviwala","646-346-9709","murtazamm@gmail.com"],["Murtaza Presswala","732-277-6679","mpresswala@gmail.com"],["Murtaza Tajkhanji","732-357-5677","mtajkhan@gmail.com"],["Murtaza Vohra","732-470-6405","murtuza.vohra@hotmail.com"],["Murtuza Bhinderwala","786-717-8123","murtuzaib@yahoo.com"],["Murtuza Husain","201-689-0786","razhusain@gmail.com"],["Murtuza Lokhandwala","214-251-5016","imtiyaz1@msn.com"],["Murtuza Rohawala","917-951-3099","rohawala@yahoo.com"],["Murtuza Waglawala","646-318-9790","expertmurtuza@gmail.com"],["Muslim Ghadiali","732-252-4828","sultanat.m@gmail.com"],["Mustafa Adil","732-937-3254","mustafahavvaadil@gmail.com"],["Mustafa Balsara","732-642-9334","mustafabalsara@gmail.com"],["Mustafa Bootwala","640-203-9352","mustafatema9314@gmail.com"],["Mustafa Cassubhai","201-889-5067","mcassubhai@gmail.com"],["Mustafa Chitalwala","626-354-7242","mchital@gmail.com"],["Mustafa Mahuvawala","732-668-1015","mz2152@hotmail.com"],["Mustafa Rawat","908-510-6313","Mustafa.rawat@gmail.com"],["Mustafa Santrampurwala","908-415-3836","arvasura@gmail.com"],["Mustafa Singapurwala","917-256-9695","mustafa_cis@hotmail.com"],["Mustafa Sutteria","732-812-1494","msutteria@gmail.com"],["Mustansir Kapasi","201-283-2710","mustankap@gmail.com"],["Mustufa Arsiwala","732-735-9737","mustufaarsiwala@gmail.com"],["Nafisa Irfani","732-614-8387","hakimirfani@hotmail.com"],["Nafisa Rangwala","732-754-3049","nzfrang52@gmail.com"],["Nafisul Hasan","917-692-9649","hasan.nafisul@gmail.com"],["Nasima Poonawalla","732-804-8375","ffp1108@yahoo.com"],["Nisreen Dalal","732-668-8400","nishrind@gmail.com"],["Nooruddin Bombaywala","609-874-4075","noorbw@gmail.com"],["Qasim Abbas","848-250-5225","qasimabbas52@gmail.com"],["Quraish Gunja","908-208-5766","qguniv@gmail.com"],["Qusai Rasul Valijiwala","347-325-2646","qusai51@gmail.com"],["Qutubuddin Saifuddin(Wajawala)","732-354-4423","qutub14@yahoo.com"],["Rahib Lakdawala","973-800-6808","Laks52@gmail.com"],["Rashida Mehta","973-519-3569","rashu0922@gmail.com"],["Rashida Najmi","610-297-5475","rashidanajmi@gmail.com"],["Rashida Tewarson","201-674-3033","rtewarson@gmail.com"],["Rehbar Tayyabkhan","908-889-5318","Rtayyabkha@aol.Com"],["Rubab Husain","908-447-6965","rubabh555@gmail.com"],["Saifuddin Palanpurwala","201-450-4566","saif5251@yahoo.com"],["Saifuddin Takhtawala","908-421-6185","stakhta@hotmail.com"],["Sakina Jagmag","860-796-2027","sjagmag@yahoo.com"],["Salman Sekelsky","347-604-2268","sekelsky@gmail.com"],["Samina Attari","213-272-9281","attari@usc.edu"],["Sana(Fatema) Jaswi(Ali)","732-351-6248","snjaswi@gmail.com"],["Shabbir Bengali","201-747-9361","maleeha11@verizon.net"],["Shabbir Bharmal","717-951-8058","shabbir.bharmal@gmail.com"],["Shabbir Bhindarwala","732-668-7724","bshabbir@yahoo.com"],["Shabbir Dahodwala","631-827-5914","shabbirad@hotmail.com"],["Shabbir Dahodwala","201-282-1700","shabbirdahodwala@gmail.com"],["Shabbir Dalal","212-203-9424","shabbirdalal@hotmail.com"],["Shabbir Dhinojwala","640-250-2101","shabbir.y@gmail.com"],["Shabbir Garbadawala","551-200-4430","shabbirmg@gmail.com"],["Shabbir Hussain","732-543-5154","shussain40@hotmail.com"],["Shabbir Jariwala","201-240-4022","shehnazjari@gmail.com"],["Shabbir Kapadia","848-219-3249","shabkap@hotmail.com"],["Shabbir Lathsaheb","848-467-0853","shabbir.husain.1987@gmail.com"],["Shabbir Mejevdiwala","571-236-0588","shabbir@gmail.com"],["Shabbir Mumtaz Husain","908-239-7918","shabbir.mh@gmail.com"],["Shabbir Tambawala","848-459-7693","fatima50hussain@gmail.com"],["Shafakut Readymadewala","651-235-9722","shafakut@gmail.com"],["Shahid Haji","732-398-1664","sakinahaji@yahoo.com"],["Shamoil(Syed Shumyle) Haider","214-236-6344","zahralokhand110@gmail.com"],["Sharifa Haidri","732-763-8432","sharifahaidri@gmail.com"],["Shenaz Paghdiwala","215-801-0403","Drafpinfo@gmail.com"],["Sherebanu Yaseen","718-496-8110","shehreyas92@hotmail.com"],["Sibtain Tinwala","847-772-5314","sibtain.shabbir@gmail.com"],["Soyeb Barot","917-607-3071","soyebb@gmail.com"],["Sugra Zakir","732-522-4050","jazakir@gmail.com"],["Taha Bangawala","609-647-3105","tahanajam@gmail.com"],["Taha Baxamusa","857-891-6753","tahabaxamusa51@gmail.com"],["Taher bs Saify","908-208-7065","tahersaif@gmail.com"],["Taher Khokhawala","646-954-7400","tik786110@gmail.com"],["Taher Mun","610-425-7074","tahermun@gmail.com"],["Taheri Kapasi","201-610-1474","taherikapasi@yahoo.com"],["Tasneem Gandhi","917-287-0074","tasgandhi5@gmail.com"],["Tasneem Hakim","732-991-0698","tasneem_hakim@yahoo.com"],["Toquir Taqui","732-491-5966","toquirtaqui@yahoo.com"],["Yousuf Ali","732-609-1428","yousuf5152@yahoo.com"],["Yunus Bandukwala","732-289-7333","yubandukwala@gmail.com"],["Yusuf Cassubhai","201-310-2388","yrcassubhai@yahoo.com"],["Yusuf Kapadia","732-433-5432","kapadiayusufnaj@gmail.com"],["Yusuf Nathani","201-885-9524","yusufeen@gmail.com"],["Yusuf Sabuwala","201-736-4146","yusufes52@gmail.com"],["Yusufali Musaji","973-985-6169","ymusaji@aol.com"],["Zahid Tambawala","848-391-5761","arifa2072@yahoo.com"],["Zainab Karimee","732-306-4117","zkarimee7@gmail.com"],["Zainab Udaipurwala","816-745-2294","zainabu73@gmail.com"],["Zainulabedin Gunja","908-208-5769","zaing12@yahoo.com"],["Zakir Poonawala","609-240-4726","zakir.poonawala@gmail.com"],["Zareena Burhanpurwala","484-885-8867","qadir.zareena@gmail.com"],["Zoeb Zakir","732-325-8137","zoebhusain@hotmail.com"],["Zohair Zumkhawala","732-812-1497","zohairnj@gmail.com"],["Zoher Chalisa","646-322-8792","niloufer786@hotmail.com"],["Zubeda Danish","914-439-3746","zfdanish@gmail.com"],["Zubeda Salim","510-449-1452","zubedasalim52@gmail.com"],["Zulekha Merchant","202-509-4242","zulekha110@hotmail.com"],["Zulfikar Fanuswala","585-576-0335","fanuswala@gmail.com"],["Aamil Saheb Mufaddal bhaisaheb Husami","848-668-3130","mufaddal.jamali52@gmail.com"],["Dr. Abbas Banglawala","609-947-4542","kanizaabbas@gmail.com"],["Dr. Amir Karu","732-397-1474","amirandsarah@gmail.com"],["Dr. Aziz Merchant","202-277-2819","azmerchantsurg@gmail.com"],["Dr. Maleka Hussain","518-434-8488","mhussain@nycap.rr.com"],["Dr. Moiz Karu","908-251-2197","zaikaru@gmail.com"],["Dr. Qusai Dahodwala","480-612-2750","qusai.dahodwala@gmail.com"],["Dr. Sabbir Rangwala","609-841-3207","srangwala@verizon.net"],["Dr. Sakina Gunja","732-715-5152","sakinagunja@gmail.com"],["Dr. Saleem Husain","908-295-5538","saleem1668@aol.com"],["Head Moallim Janaab Shk Shabbir Saifee","848-239-9431","saifeeshhh@gmail.com"],["Janaab Shaikh Mustafa Kothari","747-388-0891","mustafakothari52@gmail.com"],["Mulla Abbas Ginwala","682-551-5484","abbasginwala@gmail.com"],["Mulla Abdulqadir Zumkhawala","908-472-1998","abdulqadirmh@gmail.com"],["Mulla Abizar Zumkawala","732-939-6566","abizar@imranweb.com"],["Mulla Akbarali Khanshab","518-630-4360","khanshab@hotmail.com"],["Mulla Aliasgar Rangwala","512-971-5786","amr5786@gmail.com"],["Mulla Amena Abbas","551-208-6664","aminasabbas53@gmail.com"],["Mulla Ammar Zumkhawala","908-472-2189","ammar520@gmail.com"],["Mulla Anis Shikari","240-344-0640","aashikari@gmail.com"],["Mulla Dr. Hasan Danish","908-509-1001","hasandanish@gmail.com"],["Mulla Dr. Murtaza Ranijiwala","510-434-6507","mranijiwala@gmail.com"],["Mulla Haiderali Danish","908-852-7187","hqdanish@hotmail.com"],["Mulla Hakimuddin Jamali","732-763-6080","hakimj77@yahoo.com"],["Mulla Husain Abbas","551-580-1414","shahzad.abbas@gmail.com"],["Mulla Huseini Tambawala","484-707-6756","huseinitambawala@gmail.com"],["Mulla Hussain Malji","908-487-0736","haali@mahtecs.com"],["Mulla Imran Zumkawala","201-691-8349","imranh@imranweb.com"],["Mulla Khuzaima Sodawala","848-278-9873","khozemsodawala@gmail.com"],["Mulla Mohamed Ghasletwala","609-481-7823","mohamed.ghasletwala@gmail.com"],["Mulla Mohammed Afini","732-331-6942","mohd.afini@gmail.com"],["Mulla Mohammed Sadriwala","609-598-3190","mshsadri@gmail.com"],["Mulla Moiz Chawala","848-444-8004","himoiz@gmail.com"],["Mulla Murtaza Ambawala","201-538-5922","mambawala@gmail.com"],["Mulla Murtaza Kapadia","732-501-3370","mnkapadia@gmail.com"],["Mulla Murtaza Tohfafarosh","732-407-1805","murtuza.tohfafarosh@gmail.com"],["Mulla Mustafa Mullamithawala","929-325-4532","mustafa_b_m@yahoo.com"],["Mulla Najmuddin Tasnim","201-736-2937","najmuddin@gmail.com"],["Mulla Saifee Attarwala","813-597-1403","arva.saifee@gmail.com"],["Mulla Saifuddin Furniturewalla","732-910-6252","saifeekf@gmail.com"],["Mulla Shabbir Danish","646-915-6968","shabbirdanish@gmail.com"],["Mulla Shabbir Furniturewalla","848-228-9552","furniturewalla@gmail.com"],["Mulla Shabbir Kapadvanjwala","732-762-6000","stzain@gmail.com"],["Mulla Shabbir Mogul","917-428-4604","smogul@gmail.com"],["Mulla Shabbir Zakir","732-447-8939","az.shabbir@gmail.com"],["Mulla Taha Poonawala","201-658-4669","pmubas@hotmail.com"],["Mulla Taha Salim","201-982-0330","tsalim786@gmail.com"],["Mulla Yusuf Abdullah","917-485-5827","yusuf.abdullah@gmail.com"],["Shaikh Aamir Marvi","732-977-2468","azmarvi@hotmail.com"],["Shaikh Abbas Doctor","732-438-0262","amte92@yahoo.com"],["Shaikh Abbas Shakir","732-238-1919","nafisa_shakir@hotmail.com"],["Shaikh Abdul Husain Abbas","908-331-1527","ahusain@uscnet.com"],["Shaikh Aliasgher Khomusi","609-619-2608","maryam52@gmail.com"],["Shaikh Amir Ali Abbasi","908-420-9148","abbasiamir786@gmail.com"],["Shaikh Asgher Shakir","609-638-0699","shakir1947@aol.com"],["Shaikh Dr. Abid Paghdiwala","215-801-0403","Drafpinfo@gmail.com"],["Shaikh Dr. Adnan Danish","914-439-3746","dradnandanish@gmail.com"],["Shaikh Dr. Huzaifa Shakir","973-666-1417","hashakir@hotmail.com"],["Shaikh Dr. Murtaza Paghdiwala","215-208-6891","mpagri@gmail.com"],["Shaikh Dr. Nauman Diwan","609-273-3113","naumandiwan@comcast.net"],["Shaikh Dr. Shabbar Danish","732-887-3915","shabbardanish@gmail.com"],["Shaikh Dr. Shabbir Esaa","570-419-0092","shabbir128@gmail.com"],["Shaikh Husain Ginwala","732-829-0708","ginwalas2000@yahoo.com"],["Shaikh Husain Rajnagarwala(Raj)","708-856-2952","hk.rajnagars@gmail.com"],["Shaikh Hussain Kagazwala","201-233-4089","akhtar52@gmail.com"],["Shaikh Hussain Moochalla","732-539-8789","hmoochalla@gmail.com"],["Shaikh Huzefa Mogul","732-763-4846",""],["Shaikh Ibrahim Beguwala","732-522-9694","ebrahimaeb@gmail.com"],["Shaikh Idris Diwan","917-968-9303","idrisdiwan@gmail.com"],["Shaikh Ismail Manaqibwala","609-647-5198","imanaqibwala@yahoo.com"],["Shaikh Jabir Zakir","732-522-4050","jazakir@gmail.com"],["Shaikh Juzer Vohra","201-401-4050","juzeryvohra@yahoo.com"],["Shaikh Kutubuddin Kapadia","973-277-4556","kkutub2009@gmail.com"],["Shaikh Mansoor Husain","732-216-7217","mansoor.f.husain@gmail.com"],["Shaikh Mohammed Attarwala","917-682-6359","iattarwala@gmail.com"],["Shaikh Moiz Zumkhawala","908-472-6628","moizq10@hotmail.com"],["Shaikh Murtaza Arsiwala","732-589-3742","SugraArsiwala@gmail.com"],["Shaikh Murtaza Jamali","732-853-6995","jamalimm@gmail.com"],["Shaikh Muslim Khazanchi","732-689-0193","mkhajanchi52@hotmail.com"],["Shaikh Mustaali Hassanali","732-322-3434","hassanalicpa@gmail.com"],["Shaikh Mustafa Hassonjee","732-904-3973","hassonjeen@yahoo.com"],["Shaikh Mustafa Sabir","201-304-2538","msabir52@yahoo.com"],["Shaikh Mustafa Tayeb","917-225-3341","mhtayeb@hotmail.com"],["Shaikh Mustafa Vohra","973-930-4576","batulvohra@gmail.com"],["Shaikh Shabbir Abbas","732-618-6254","shabbir@uscnet.com"],["Shaikh Shabbir Jamali","732-773-5851","Mail@jamalifamily.com"],["Shaikh Shabbir Moochalla","732-305-0110","smoochalla@gmail.com"],["Shaikh Shakir Jamali","732-904-3969","mshakirjamali@aol.com"],["Shaikh Taizun Hassonjee","732-763-4869","maaryah@yahoo.com"],["Shaikh Tayzoon Rasani","732-372-2226","rasanit@gmail.com"],["Shaikh Zainul Abideen Husain","205-601-1582","nyekeeper@gmail.com"],["Shaikh Zakiuddin Husain","908-616-6723","zakiuddin5@gmail.com"]];
+
 // ── Data ─────────────────────────────────────────────────────────────────────
 const RAW = [
   ["Sakina Sodawala","3474453670","sakinasodawala@gmail.com",1],
@@ -624,309 +449,265 @@ const RAW = [
   ["Lamiya Khazanchi","7329399672","Mkhajanchi52@hotmail.com",2]
 ];
 
-// Build pledges array
 const pledges = RAW.map((r, i) => ({
   id: i,
   name: r[0],
   phone: r[1],
   email: r[2],
   count: parseInt(r[3]) || 1,
-  numbers: [],
-  returned: []   // thaal numbers returned back to the owner
+  num: null,      // single assigned engraving number
+  returned: false
 }));
-
-const TOTAL_THAALS = pledges.reduce((s,p) => s + p.count, 0);
 
 // ── Persistence ───────────────────────────────────────────────────────────────
 function loadState() {
   try {
-    const s = localStorage.getItem('thaal_v3');
+    const s = localStorage.getItem('thaal_v4');
     if (s) {
-      JSON.parse(s).forEach(({id, numbers, returned}) => {
+      JSON.parse(s).forEach(({id, num, returned, count}) => {
         const p = pledges.find(x => x.id === id);
-        if (p) {
-          p.numbers  = numbers  || [];
-          p.returned = returned || [];
-        }
+        if (!p) return;
+        p.num      = num      ?? null;
+        p.returned = returned ?? false;
+        if (count != null) p.count = count;
       });
-      return;
+    } else {
+      const v3 = localStorage.getItem('thaal_v3');
+      if (v3) {
+        JSON.parse(v3).forEach(({id, numbers, returned, count}) => {
+          const p = pledges.find(x => x.id === id);
+          if (!p) return;
+          p.num      = (numbers && numbers.length) ? numbers[0] : null;
+          p.returned = Array.isArray(returned) ? returned.length > 0 : !!returned;
+          if (count != null) p.count = count;
+        });
+      }
     }
-    // Migrate from v2
-    const v2 = localStorage.getItem('thaal_v2');
-    if (v2) {
-      JSON.parse(v2).forEach(({id, numbers}) => {
-        const p = pledges.find(x => x.id === id);
-        if (p) { p.numbers = numbers || []; p.returned = []; }
-      });
-      saveState();
-    }
+    // Load user-added pledges (ids >= 1000)
+    const added = localStorage.getItem('thaal_added');
+    if (added) JSON.parse(added).forEach(p => { if (!pledges.find(x => x.id === p.id)) pledges.push(p); });
+    saveState();
   } catch(e) {}
 }
 function saveState() {
   try {
-    localStorage.setItem('thaal_v3', JSON.stringify(
-      pledges.map(p => ({id: p.id, numbers: p.numbers, returned: p.returned}))
+    localStorage.setItem('thaal_v4', JSON.stringify(
+      pledges.map(p => ({id: p.id, num: p.num, returned: p.returned, count: p.count}))
     ));
+    localStorage.setItem('thaal_added', JSON.stringify(pledges.filter(p => p.id >= 1000)));
   } catch(e) {}
 }
 loadState();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function allUsedNumbers() {
-  const s = new Set();
-  pledges.forEach(p => p.numbers.forEach(n => s.add(n)));
-  return s;
+function totalThaals()   { return pledges.reduce((s,p) => s + p.count, 0); }
+function numberedCount() { return pledges.filter(p => p.num !== null).length; }
+function returnedCount() { return pledges.filter(p => p.returned).length; }
+function allUsedNums()   { return new Set(pledges.filter(p => p.num !== null).map(p => p.num)); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Sort state ────────────────────────────────────────────────────────────────
+let sortCol = 'first-name', sortDir = 'asc';
+
+function sortBy(col) {
+  sortDir = sortCol === col ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+  sortCol = col;
+  render();
 }
-function availableFor(pledge) {
-  const used = allUsedNumbers();
-  pledge.numbers.forEach(n => used.delete(n));
-  const avail = [];
-  for (let i = 1; avail.length < 80; i++) {
-    if (!used.has(i)) avail.push(i);
-    if (i > TOTAL_THAALS + 30) break;
+
+function lastName(name) { const p = name.trim().split(/\s+/); return p[p.length - 1].toLowerCase(); }
+function firstName(name){ return name.trim().split(/\s+/)[0].toLowerCase(); }
+
+function applySortIndicators() {
+  ['first-name','last-name','count','num','returned'].forEach(c => {
+    const si = document.getElementById('si-'+c);
+    const th = document.getElementById('th-'+c);
+    if (si) si.textContent = sortCol === c ? (sortDir === 'asc' ? '▲' : '▼') : '';
+    if (th) th.classList.toggle('sorted', sortCol === c);
+  });
+}
+
+// ── Edit state ────────────────────────────────────────────────────────────────
+let editingId = null, editingCountId = null;
+
+function startNumEdit(id) {
+  editingCountId = null; editingId = id; render();
+  setTimeout(() => { const el = document.getElementById('ni-'+id); if (el) { el.focus(); el.select(); } }, 0);
+}
+function cancelNumEdit() { editingId = null; render(); }
+
+function saveNumInput(id) {
+  const el = document.getElementById('ni-'+id);
+  if (!el) return;
+  const errEl = document.getElementById('ni-err-'+id);
+  const raw = el.value.trim();
+
+  if (!raw) {
+    const p = pledges.find(x => x.id === id);
+    p.num = null; p.returned = false;
+    editingId = null; saveState(); render(); return;
   }
-  return avail;
+
+  const n = parseInt(raw);
+  if (isNaN(n) || n < 1 || String(n) !== raw) {
+    if (errEl) errEl.textContent = 'Enter a single whole number (e.g. 42)'; return;
+  }
+
+  const used = allUsedNums();
+  const p = pledges.find(x => x.id === id);
+  if (p.num !== null) used.delete(p.num); // allow keeping own number
+  if (used.has(n)) {
+    const owner = pledges.find(x => x.num === n);
+    if (errEl) errEl.textContent = `#${n} is already assigned to ${owner ? owner.name : 'someone else'}`;
+    return;
+  }
+
+  if (p.num !== n) p.returned = false; // reset return status if number changed
+  p.num = n;
+  editingId = null; saveState(); render();
 }
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function handleNumKey(e, id) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveNumInput(id); }
+  if (e.key === 'Escape') { cancelNumEdit(); }
 }
-function assignedCount() { return pledges.reduce((s,p) => s+p.numbers.length, 0); }
-function returnedCount() { return pledges.reduce((s,p) => s+p.returned.length, 0); }
-function fullyAssigned() { return pledges.filter(p => p.numbers.length >= p.count).length; }
-function isReturned(p, n) { return p.returned.includes(n); }
+
+function startCountEdit(id) {
+  editingId = null; editingCountId = id; render();
+  setTimeout(() => { const el = document.getElementById('ci-'+id); if (el) { el.focus(); el.select(); } }, 0);
+}
+function saveCountEdit(id) {
+  const el = document.getElementById('ci-'+id);
+  if (!el) return;
+  const val = parseInt(el.value);
+  if (!isNaN(val) && val >= 1) { pledges.find(x => x.id === id).count = val; }
+  editingCountId = null; saveState(); render();
+}
+function handleCountKey(e, id) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveCountEdit(id); }
+  if (e.key === 'Escape') { editingCountId = null; render(); }
+}
+
+function toggleReturn(id) {
+  const p = pledges.find(x => x.id === id);
+  if (!p || p.num === null) return;
+  p.returned = !p.returned;
+  saveState(); render();
+}
 
 // ── Metrics ───────────────────────────────────────────────────────────────────
 function renderMetrics() {
-  const assigned = assignedCount();
+  const total    = pledges.length;
+  const numbered = numberedCount();
   const returned = returnedCount();
-  const fullyAss = fullyAssigned();
-  const stillOut = assigned - returned;
-  const assignPct = TOTAL_THAALS ? Math.round(assigned/TOTAL_THAALS*100) : 0;
-  const returnPct = assigned ? Math.round(returned/assigned*100) : 0;
+  const stillOut = numbered - returned;
+  const numPct = total   ? Math.round(numbered/total*100)   : 0;
+  const retPct = numbered ? Math.round(returned/numbered*100) : 0;
 
   document.getElementById('metrics-row').innerHTML = `
-    <div class="metric-card"><div class="metric-label">Pledgers</div><div class="metric-value">${pledges.length}</div><div class="metric-sub">families</div></div>
-    <div class="metric-card"><div class="metric-label">Thaals pledged</div><div class="metric-value">${TOTAL_THAALS}</div><div class="metric-sub">total</div></div>
-    <div class="metric-card"><div class="metric-label">Numbers assigned</div><div class="metric-value">${assigned}</div><div class="metric-sub">of ${TOTAL_THAALS} (${assignPct}%)</div></div>
-    <div class="metric-card"><div class="metric-label">Returned</div><div class="metric-value" style="color:var(--green)">${returned}</div><div class="metric-sub">of ${assigned} assigned</div></div>
+    <div class="metric-card"><div class="metric-label">Pledgers</div><div class="metric-value">${total}</div><div class="metric-sub">families</div></div>
+    <div class="metric-card"><div class="metric-label">Thaals pledged</div><div class="metric-value">${totalThaals()}</div><div class="metric-sub">total</div></div>
+    <div class="metric-card"><div class="metric-label">Returned</div><div class="metric-value" style="color:var(--green)">${returned}</div><div class="metric-sub">of ${numbered} numbered</div></div>
     <div class="metric-card"><div class="metric-label">Still out</div><div class="metric-value" style="color:var(--amber)">${stillOut}</div><div class="metric-sub">need to return</div></div>
   `;
 
-  document.getElementById('assign-progress-fill').style.width = assignPct + '%';
-  document.getElementById('assign-progress-pct').textContent = assignPct + '%';
-  document.getElementById('assign-progress-label').textContent = `Engraving — ${assigned} of ${TOTAL_THAALS} thaals numbered`;
+  document.getElementById('num-progress-fill').style.width = numPct + '%';
+  document.getElementById('num-progress-pct').textContent  = numPct + '%';
+  document.getElementById('num-progress-label').textContent = `Numbering — ${numbered} of ${total} pledgers`;
 
-  document.getElementById('return-progress-fill').style.width = returnPct + '%';
-  document.getElementById('return-progress-pct').textContent = returnPct + '%';
-  document.getElementById('return-progress-label').textContent = `Returns — ${returned} of ${assigned} thaals returned`;
+  document.getElementById('ret-progress-fill').style.width = retPct + '%';
+  document.getElementById('ret-progress-pct').textContent  = retPct + '%';
+  document.getElementById('ret-progress-label').textContent = `Returns — ${returned} of ${numbered} returned`;
 }
 
-// ── Active tab ────────────────────────────────────────────────────────────────
+// ── Tab state ─────────────────────────────────────────────────────────────────
 let activeTab = 'pledges';
-let returnsFilter = 'all';
-
 function switchTab(tab, btn) {
-  activeTab = tab;
+  activeTab = tab; editingId = null; editingCountId = null;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  ['pledges','numbers','returns','summary'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t === tab ? '' : 'none';
-  });
-  document.getElementById('toolbar').style.display = (tab === 'summary' || tab === 'returns') ? 'none' : '';
+  document.getElementById('tab-pledges').style.display = tab === 'pledges' ? '' : 'none';
+  document.getElementById('tab-summary').style.display = tab === 'summary' ? '' : 'none';
+  document.getElementById('toolbar').style.display     = tab === 'summary' ? 'none' : '';
   render();
 }
 
 // ── Pledges table ─────────────────────────────────────────────────────────────
 function renderPledges() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const f = document.getElementById('filter').value;
+  applySortIndicators();
 
-  const rows = pledges.filter(p => {
-    const matchQ = !q || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)
-      || p.phone.includes(q) || p.numbers.some(n => String(n).includes(q));
-    const full    = p.numbers.length >= p.count;
-    const partial = p.numbers.length > 0 && !full;
-    const none    = p.numbers.length === 0;
-    const allRet  = p.numbers.length > 0 && p.numbers.every(n => p.returned.includes(n));
-    const notAllRet = p.numbers.length > 0 && !allRet;
-    if (f === 'pending'      && !none)     return false;
-    if (f === 'partial'      && !partial)  return false;
-    if (f === 'done'         && !full)     return false;
-    if (f === 'returned'     && !allRet)   return false;
-    if (f === 'not-returned' && !notAllRet) return false;
-    return matchQ;
+  const q = document.getElementById('search').value.toLowerCase();
+
+  let rows = pledges.filter(p =>
+    !q || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)
+      || p.phone.includes(q) || (p.num !== null && String(p.num).includes(q))
+  );
+
+  rows.sort((a, b) => {
+    let va, vb;
+    if      (sortCol === 'first-name') { va = firstName(a.name); vb = firstName(b.name); }
+    else if (sortCol === 'last-name')  { va = lastName(a.name);  vb = lastName(b.name); }
+    else if (sortCol === 'count')      { va = a.count; vb = b.count; }
+    else if (sortCol === 'num')        { va = a.num ?? 99999; vb = b.num ?? 99999; }
+    else if (sortCol === 'returned')   { va = a.returned ? 1 : 0; vb = b.returned ? 1 : 0; }
+    else return 0;
+    if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return sortDir === 'asc' ? va - vb : vb - va;
   });
 
   if (!rows.length) {
     document.getElementById('pledge-tbody').innerHTML =
-      '<tr><td colspan="7"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
+      '<tr><td colspan="6"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
     return;
   }
 
   document.getElementById('pledge-tbody').innerHTML = rows.map(p => {
-    const full    = p.numbers.length >= p.count;
-    const partial = p.numbers.length > 0 && !full;
+    // Count cell
+    const countCell = editingCountId === p.id
+      ? `<input class="count-input" id="ci-${p.id}" type="number" min="1" max="50" value="${p.count}" onkeydown="handleCountKey(event,${p.id})" onblur="saveCountEdit(${p.id})">`
+      : `<span class="badge badge-gray count-badge-edit" onclick="startCountEdit(${p.id})" title="Click to edit">${p.count}</span>`;
 
-    let statusBadge;
-    if (!p.numbers.length) {
-      statusBadge = '<span class="badge badge-gray">Pending</span>';
-    } else if (partial) {
-      statusBadge = '<span class="badge badge-amber">Partial</span>';
+    // Number cell
+    let numCell;
+    if (editingId === p.id) {
+      numCell = `<div class="num-input-wrap">
+        <div class="num-input-row">
+          <input class="num-input" id="ni-${p.id}" type="number" min="1"
+            value="${p.num ?? ''}" placeholder="e.g. 42"
+            onkeydown="handleNumKey(event,${p.id})">
+          <button class="cancel-btn" onclick="cancelNumEdit()">✕</button>
+        </div>
+        <span class="num-input-hint">Enter to save · Esc to cancel</span>
+        <span class="num-input-err" id="ni-err-${p.id}"></span>
+      </div>`;
+    } else if (p.num !== null) {
+      numCell = `<span class="num-tag${p.returned?' returned':''}">#${p.num}</span>
+        <button class="edit-btn" onclick="startNumEdit(${p.id})" title="Edit">✎</button>`;
     } else {
-      statusBadge = '<span class="badge badge-green">Assigned</span>';
+      numCell = `<button class="assign-btn" onclick="startNumEdit(${p.id})">+ Assign</button>`;
     }
 
-    const numsHtml = p.numbers.length
-      ? `<div class="num-tags">${p.numbers.map(n =>
-          `<span class="num-tag${p.returned.includes(n)?' returned':''}">#${n}</span>`
-        ).join('')}</div>`
-      : '';
-
-    const retCount  = p.returned.length;
-    const retOf     = p.numbers.length;
-    let retBadge = '';
-    if (retOf > 0) {
-      if (retCount === retOf)  retBadge = `<span class="badge badge-green">${retCount}/${retOf}</span>`;
-      else if (retCount > 0)   retBadge = `<span class="badge badge-amber">${retCount}/${retOf}</span>`;
-      else                     retBadge = `<span class="badge badge-gray">0/${retOf}</span>`;
-    } else {
-      retBadge = '<span class="badge badge-gray">—</span>';
-    }
-
-    const assignHtml = !full
-      ? `<button class="assign-btn" onclick="openModal(${p.id})">+ Assign</button>`
-      : '';
-    const editHtml = p.numbers.length
-      ? `<button class="edit-btn" onclick="openModal(${p.id})" title="Edit">✎</button>`
-      : '';
+    // Return cell
+    const retCell = p.num !== null
+      ? `<button class="return-btn${p.returned?' is-returned':''}" onclick="toggleReturn(${p.id})">
+           ${p.returned ? '✓ Returned' : 'Mark Returned'}
+         </button>`
+      : `<span style="color:var(--text3);font-size:12px">—</span>`;
 
     return `<tr>
-      <td class="name-cell">${esc(p.name)}</td>
-      <td><span class="badge badge-blue">${p.count}</span></td>
-      <td>${numsHtml}${assignHtml}${editHtml}</td>
-      <td>${retBadge}</td>
-      <td class="email-cell">${esc(p.email)}</td>
-      <td class="email-cell">${esc(p.phone)}</td>
-      <td>${statusBadge}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Numbers table ─────────────────────────────────────────────────────────────
-function renderNumbers() {
-  const numMap = {};
-  pledges.forEach(p => p.numbers.forEach(n => { numMap[n] = p; }));
-  const nums = Object.keys(numMap).map(Number).sort((a,b) => a-b);
-
-  const q = document.getElementById('search').value.toLowerCase();
-  const filtered = nums.filter(n => {
-    if (!q) return true;
-    const p = numMap[n];
-    return String(n).includes(q) || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q);
-  });
-
-  if (!filtered.length) {
-    document.getElementById('numbers-tbody').innerHTML =
-      '<tr><td colspan="5"><div class="empty-state">No numbers assigned yet<p>Go to the Pledges tab to start assigning thaal numbers.</p></div></td></tr>';
-    return;
-  }
-
-  document.getElementById('numbers-tbody').innerHTML = filtered.map(n => {
-    const p = numMap[n];
-    const ret = p.returned.includes(n);
-    const statusBadge = ret
-      ? '<span class="badge badge-green">Returned</span>'
-      : '<span class="badge badge-amber">Still Out</span>';
-    const btnLabel = ret ? '↩ Undo return' : '✓ Mark returned';
-    return `<tr>
-      <td><span class="num-tag${ret?' returned':''}">#${n}</span></td>
-      <td class="name-cell">${esc(p.name)}</td>
-      <td class="email-cell">${esc(p.email)}</td>
-      <td class="email-cell">${esc(p.phone)}</td>
-      <td style="display:flex;align-items:center;gap:8px">
-        ${statusBadge}
-        <button class="return-btn${ret?' is-returned':''}" onclick="toggleReturn(${p.id},${n})">${btnLabel}</button>
+      <td class="name-cell">
+        <div>${esc(p.name)}</div>
+        <div class="name-sub">${esc(p.email)}${p.phone && p.phone !== '—' ? ' · ' + esc(p.phone) : ''}</div>
       </td>
+      <td>${countCell}</td>
+      <td>${numCell}</td>
+      <td>${retCell}</td>
     </tr>`;
   }).join('');
-}
-
-// ── Returns tab ───────────────────────────────────────────────────────────────
-function filterReturns(f) {
-  returnsFilter = f;
-  ['all','out','returned'].forEach(k => {
-    const btn = document.getElementById('ret-filter-'+k);
-    btn.style.background = k === f ? 'var(--accent)' : '';
-    btn.style.color = k === f ? 'white' : '';
-    btn.style.borderColor = k === f ? 'transparent' : '';
-  });
-  renderReturns();
-}
-
-function renderReturns() {
-  const numMap = {};
-  pledges.forEach(p => p.numbers.forEach(n => { numMap[n] = p; }));
-  let nums = Object.keys(numMap).map(Number).sort((a,b) => a-b);
-
-  if (returnsFilter === 'out')      nums = nums.filter(n => !numMap[n].returned.includes(n));
-  if (returnsFilter === 'returned') nums = nums.filter(n =>  numMap[n].returned.includes(n));
-
-  const total     = Object.keys(numMap).length;
-  const retTotal  = pledges.reduce((s,p) => s+p.returned.length, 0);
-  document.getElementById('returns-count-label').textContent =
-    `${retTotal} of ${total} thaals returned · ${total - retTotal} still out`;
-
-  if (!nums.length) {
-    const msg = returnsFilter === 'all' ? 'No thaals assigned yet.' :
-                returnsFilter === 'out' ? 'All assigned thaals have been returned!' :
-                'No thaals marked as returned yet.';
-    document.getElementById('returns-tbody').innerHTML =
-      `<tr><td colspan="5"><div class="empty-state">${msg}</div></td></tr>`;
-    return;
-  }
-
-  document.getElementById('returns-tbody').innerHTML = nums.map(n => {
-    const p = numMap[n];
-    const ret = p.returned.includes(n);
-    const statusBadge = ret
-      ? '<span class="badge badge-green">Returned</span>'
-      : '<span class="badge badge-amber">Still Out</span>';
-    const btnLabel = ret ? '↩ Undo' : '✓ Mark returned';
-    return `<tr>
-      <td><span class="num-tag${ret?' returned':''}">#${n}</span></td>
-      <td class="name-cell">${esc(p.name)}</td>
-      <td class="email-cell">${esc(p.phone)}</td>
-      <td class="email-cell">${esc(p.email)}</td>
-      <td style="display:flex;align-items:center;gap:8px">
-        ${statusBadge}
-        <button class="return-btn${ret?' is-returned':''}" onclick="toggleReturn(${p.id},${n});renderReturns();renderMetrics();">${btnLabel}</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-// ── Return toggle ─────────────────────────────────────────────────────────────
-function toggleReturn(pledgeId, num) {
-  const p = pledges.find(x => x.id === pledgeId);
-  if (!p) return;
-  const idx = p.returned.indexOf(num);
-  if (idx > -1) p.returned.splice(idx, 1);
-  else          p.returned.push(num);
-  saveState();
-  render();
 }
 
 // ── Summary tab ───────────────────────────────────────────────────────────────
 function renderSummary() {
-  const top = [...pledges].sort((a,b) => b.count - a.count).slice(0, 10);
-  document.getElementById('top-pledgers').innerHTML = top.map((p, i) =>
-    `<div class="top-pledger">
-      <span class="pledger-rank">${i+1}</span>
-      <span class="pledger-name">${esc(p.name)}</span>
-      <span class="badge badge-blue">${p.count}</span>
-    </div>`
-  ).join('');
-
   const byCount = {};
   pledges.forEach(p => { byCount[p.count] = (byCount[p.count]||0) + 1; });
   const maxVal = Math.max(...Object.values(byCount));
@@ -940,95 +721,115 @@ function renderSummary() {
         <span class="badge badge-gray">${v}</span>
       </div>`;
     }).join('');
+
+  const top = [...pledges].sort((a,b) => b.count - a.count).slice(0, 10);
+  document.getElementById('top-pledgers').innerHTML = top.map((p, i) =>
+    `<div class="top-pledger">
+      <span class="pledger-rank">${i+1}</span>
+      <span class="pledger-name">${esc(p.name)}</span>
+      <span class="badge badge-blue">${p.count}</span>
+    </div>`
+  ).join('');
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
 function render() {
   renderMetrics();
-  if      (activeTab === 'pledges') renderPledges();
-  else if (activeTab === 'numbers') renderNumbers();
-  else if (activeTab === 'returns') renderReturns();
-  else                              renderSummary();
+  if (activeTab === 'pledges') renderPledges();
+  else                         renderSummary();
 }
 
-// ── Assign modal ──────────────────────────────────────────────────────────────
-let modalId = null;
-let selected = [];
+// ── Add pledge ────────────────────────────────────────────────────────────────
+let acIndex = -1;
 
-function openModal(id) {
-  modalId = id;
-  const p = pledges.find(x => x.id === id);
-  selected = [...p.numbers];
-  document.getElementById('modal-name').textContent = p.name;
-  document.getElementById('modal-sub').textContent = `Pledged ${p.count} thaal${p.count>1?'s':''}`;
-  document.getElementById('modal-note').textContent =
-    `Select up to ${p.count} number${p.count>1?'s':''} to assign. Numbers taken by others are hidden.`;
-  const avail = availableFor(p);
-  document.getElementById('num-picker').innerHTML = avail.map(n =>
-    `<button class="num-option${selected.includes(n)?' selected':''}" onclick="toggleNum(${n},this)">#${n}</button>`
-  ).join('');
-  document.getElementById('assign-modal').classList.add('open');
+function openAddPledge() {
+  document.getElementById('ap-name').value = '';
+  document.getElementById('ap-email').value = '';
+  document.getElementById('ap-phone').value = '';
+  document.getElementById('ap-count').value = '1';
+  document.getElementById('ap-err').textContent = '';
+  acHide();
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(() => document.getElementById('ap-name').focus(), 50);
 }
-
-function toggleNum(n, el) {
-  const p = pledges.find(x => x.id === modalId);
-  const idx = selected.indexOf(n);
-  if (idx > -1) { selected.splice(idx, 1); el.classList.remove('selected'); }
-  else {
-    if (selected.length >= p.count) {
-      const first = selected.shift();
-      document.querySelectorAll('.num-option').forEach(b => {
-        if (b.textContent === '#'+first) b.classList.remove('selected');
-      });
-    }
-    selected.push(n); el.classList.add('selected');
+function closeAddModal(e) {
+  if (!e || e.target === document.getElementById('add-modal')) {
+    document.getElementById('add-modal').classList.remove('open');
+    acHide();
   }
 }
 
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('assign-modal')) closeModalDirect();
+function acUpdate() {
+  const q = document.getElementById('ap-name').value.trim().toLowerCase();
+  acIndex = -1;
+  if (q.length < 2) { acHide(); return; }
+  const words = q.split(/\s+/);
+  const matches = DIRECTORY.filter(([name]) => {
+    const n = name.toLowerCase();
+    return words.every(w => n.includes(w));
+  }).slice(0, 8);
+  if (!matches.length) { acHide(); return; }
+  const list = document.getElementById('ac-list');
+  list.innerHTML = matches.map((m, i) =>
+    `<div class="ac-item" data-i="${i}" onmousedown="acSelect(${i})" onmouseover="acHover(${i})">
+      <div>${esc(m[0])}</div>
+      <div class="ac-item-sub">${m[2] ? esc(m[2]) : ''}${m[1] ? ' · ' + esc(m[1]) : ''}</div>
+    </div>`
+  ).join('');
+  list._matches = matches;
+  list.style.display = 'block';
 }
-function closeModalDirect() {
-  document.getElementById('assign-modal').classList.remove('open');
-  modalId = null; selected = [];
+function acHide() {
+  const l = document.getElementById('ac-list');
+  l.style.display = 'none'; l.innerHTML = ''; l._matches = null;
+}
+function acHover(i) {
+  acIndex = i;
+  document.querySelectorAll('.ac-item').forEach((el, j) => el.classList.toggle('ac-active', j === i));
+}
+function acSelect(i) {
+  const list = document.getElementById('ac-list');
+  const m = list._matches && list._matches[i];
+  if (!m) return;
+  document.getElementById('ap-name').value  = m[0];
+  document.getElementById('ap-email').value = m[2] || '';
+  document.getElementById('ap-phone').value = m[1] || '';
+  acHide();
+  document.getElementById('ap-count').focus();
+}
+function acKey(e) {
+  const list = document.getElementById('ac-list');
+  const items = list.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown')  { e.preventDefault(); acHover(Math.min(acIndex + 1, items.length - 1)); }
+  if (e.key === 'ArrowUp')    { e.preventDefault(); acHover(Math.max(acIndex - 1, 0)); }
+  if (e.key === 'Enter' && acIndex >= 0) { e.preventDefault(); acSelect(acIndex); }
+  if (e.key === 'Escape')     { acHide(); }
 }
 
-function confirmAssign() {
-  if (modalId === null) return;
-  const p = pledges.find(x => x.id === modalId);
-  const newNumbers = [...selected].sort((a,b) => a-b);
-  // Remove return status for any numbers that were de-assigned
-  const removed = p.numbers.filter(n => !newNumbers.includes(n));
-  p.returned = p.returned.filter(n => !removed.includes(n));
-  p.numbers = newNumbers;
+function submitAddPledge() {
+  const name  = document.getElementById('ap-name').value.trim();
+  const email = document.getElementById('ap-email').value.trim();
+  const phone = document.getElementById('ap-phone').value.trim();
+  const count = parseInt(document.getElementById('ap-count').value);
+  const errEl = document.getElementById('ap-err');
+  if (!name) { errEl.textContent = 'Name is required.'; return; }
+  if (isNaN(count) || count < 1) { errEl.textContent = 'Enter a valid thaal count.'; return; }
+  const newId = 1000 + pledges.filter(p => p.id >= 1000).length;
+  pledges.push({ id: newId, name, email, phone, count, num: null, returned: false });
   saveState();
-  closeModalDirect();
+  document.getElementById('add-modal').classList.remove('open');
+  acHide();
   render();
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
 function openExport() {
-  const header = 'Name,Email,Phone,Thaals Pledged,Assigned Numbers,Returned Numbers,Assignment Status,Return Status';
-  const rows = pledges.map(p => {
-    const full    = p.numbers.length >= p.count;
-    const partial = p.numbers.length > 0 && !full;
-    const assignStatus = full ? 'Assigned' : partial ? 'Partial' : 'Pending';
-    const retCount = p.returned.length;
-    const retStatus = p.numbers.length === 0 ? 'N/A'
-      : retCount === p.numbers.length ? 'All Returned'
-      : retCount > 0 ? 'Partially Returned'
-      : 'Not Returned';
-    return [
-      `"${p.name}"`,
-      `"${p.email}"`,
-      `"${p.phone}"`,
-      p.count,
-      `"${p.numbers.join(', ')}"`,
-      `"${p.returned.join(', ')}"`,
-      assignStatus,
-      retStatus
-    ].join(',');
-  });
+  const header = 'Name,Email,Phone,Thaals Pledged,Assigned Number,Returned';
+  const rows = pledges.map(p => [
+    `"${p.name}"`, `"${p.email}"`, `"${p.phone}"`,
+    p.count, p.num ?? '', p.returned ? 'Yes' : 'No'
+  ].join(','));
   document.getElementById('export-area').value = [header, ...rows].join('\n');
   document.getElementById('export-modal').classList.add('open');
 }
@@ -1037,16 +838,14 @@ function closeExportModal(e) {
     document.getElementById('export-modal').classList.remove('open');
 }
 function copyCSV() {
-  const ta = document.getElementById('export-area');
-  ta.select();
+  document.getElementById('export-area').select();
   document.execCommand('copy');
   const btn = document.querySelector('#export-modal .btn-accent');
   btn.textContent = 'Copied!';
   setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-filterReturns('all');
+document.addEventListener('click', e => { if (!e.target.closest('.ac-wrap')) acHide(); });
 render();
 </script>
 </body>
