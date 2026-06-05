@@ -17,8 +17,8 @@
     --border: rgba(60,50,30,0.12);
     --border-strong: rgba(60,50,30,0.22);
     --text: #1a1510;
-    --text2: #6b5e4e;
-    --text3: #a39080;
+    --text2: #5a4d3d;
+    --text3: #847258;
     --accent: #b85c2a;
     --accent-light: #f5e8de;
     --accent-dark: #8a3d18;
@@ -39,7 +39,7 @@
     :root {
       --bg: #1a1510; --surface: #231e18; --surface2: #2e2820;
       --border: rgba(255,220,180,0.1); --border-strong: rgba(255,220,180,0.2);
-      --text: #f0e8dc; --text2: #b8a898; --text3: #7a6858;
+      --text: #f0e8dc; --text2: #c9bbac; --text3: #a1907f;
       --accent: #e07840; --accent-light: #3a2215; --accent-dark: #f09060;
       --green: #74c69d; --green-light: #1b3a2a;
       --amber: #ffc107; --amber-light: #332600;
@@ -58,6 +58,11 @@
   .logo-icon svg { width: 18px; height: 18px; fill: white; }
   .logo-text { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); letter-spacing: -0.3px; }
   .logo-sub { font-size: 11px; color: var(--text3); margin-left: 4px; }
+  .sync-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); font-weight: 500; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0; transition: background 0.3s; }
+  .sync-dot.live { background: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+  .sync-dot.offline { background: var(--amber); }
+  @media (max-width: 680px) { #sync-text { display: none; } }
 
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); transition: all 0.15s; }
   .btn:hover { background: var(--surface2); color: var(--text); }
@@ -137,8 +142,8 @@
 
   /* ── Count input ── */
   .count-input { width: 52px; padding: 3px 8px; border: 1.5px solid var(--accent); border-radius: 8px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; text-align: center; outline: none; }
-  .count-badge-edit { cursor: pointer; }
-  .count-badge-edit:hover { opacity: 0.75; }
+  .count-badge-edit { cursor: pointer; border-style: dashed !important; border-color: var(--border-strong) !important; }
+  .count-badge-edit:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
 
   /* ── Action buttons ── */
   .assign-btn { font-size: 12px; padding: 4px 10px; border-radius: 7px; cursor: pointer; border: 1px dashed var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px; }
@@ -184,7 +189,7 @@
   .export-area { width: 100%; height: 200px; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 10px; font-family: monospace; font-size: 12px; background: var(--surface2); color: var(--text); resize: none; }
 
   /* ── Name cell sub-info ── */
-  .name-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .name-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
 
   /* ── Add-pledge form ── */
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
@@ -214,6 +219,8 @@
     .num-input { width: 72px; }
   }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -222,6 +229,10 @@
     <div class="logo">
       <span class="logo-text">Thaal Tracker</span>
       <span class="logo-sub">NJ Jamaat · Muharram 1447</span>
+    </div>
+    <div class="sync-status" id="sync-status" title="Connecting to shared database…">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-text">Connecting…</span>
     </div>
   </div>
 </header>
@@ -439,7 +450,10 @@ const RAW = [
   ["Kaneez Darbar","9736327059","Kdarbar@comcast.net",1],
   ["Shehnaaz Shabbir Jariwala","2012404022","Shehnazjari@gmail.com",1],
   ["Shk. Zakiuddin Husain","9086166723","zakiuddin5@gmail.com",4],
-  ["Lamiya Khazanchi","7329399672","Mkhajanchi52@hotmail.com",2]
+  ["Lamiya Khazanchi","7329399672","Mkhajanchi52@hotmail.com",2],
+  ["Shk Shakir H Jamali","732-904-3969","Mshakirjamali@oal",7],
+  ["Murtaza Tajkhan","7323575677","mtajkhan@gmail.com",1],
+  ["Zainab Paghdiwala","6104572371","zainabmun52@gmail.com",3]
 ];
 
 const pledges = RAW.map((r, i) => ({
@@ -452,45 +466,114 @@ const pledges = RAW.map((r, i) => ({
   returned: false
 }));
 
-// ── Persistence ───────────────────────────────────────────────────────────────
-function loadState() {
+// ── Firebase config ───────────────────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC-nIYxvpB7He2k9R7gy_q5-g8PHoHWyks",
+  authDomain: "njjamaat.firebaseapp.com",
+  projectId: "njjamaat",
+  storageBucket: "njjamaat.firebasestorage.app",
+  messagingSenderId: "121049246243",
+  appId: "1:121049246243:web:f81fd424916430ad94df96"
+};
+const CLOUD_COLLECTION = 'pledges';
+let db = null, cloudReady = false, everLive = false;
+
+// ── Local storage (offline cache + fallback) ─────────────────────────────────
+const LS_KEY = 'thaal_v5';
+function saveLocal() {
   try {
-    const s = localStorage.getItem('thaal_v4');
-    if (s) {
-      JSON.parse(s).forEach(({id, num, returned, count}) => {
-        const p = pledges.find(x => x.id === id);
-        if (!p) return;
-        p.num      = num      ?? null;
-        p.returned = returned ?? false;
-        if (count != null) p.count = count;
-      });
-    } else {
-      const v3 = localStorage.getItem('thaal_v3');
-      if (v3) {
-        JSON.parse(v3).forEach(({id, numbers, returned, count}) => {
-          const p = pledges.find(x => x.id === id);
-          if (!p) return;
-          p.num      = (numbers && numbers.length) ? numbers[0] : null;
-          p.returned = Array.isArray(returned) ? returned.length > 0 : !!returned;
-          if (count != null) p.count = count;
-        });
-      }
-    }
-    // Load user-added pledges (ids >= 1000)
-    const added = localStorage.getItem('thaal_added');
-    if (added) JSON.parse(added).forEach(p => { if (!pledges.find(x => x.id === p.id)) pledges.push(p); });
-    saveState();
-  } catch(e) {}
-}
-function saveState() {
-  try {
-    localStorage.setItem('thaal_v4', JSON.stringify(
-      pledges.map(p => ({id: p.id, num: p.num, returned: p.returned, count: p.count}))
+    localStorage.setItem(LS_KEY, JSON.stringify(
+      pledges.map(p => ({
+        id: p.id, num: p.num, returned: p.returned, count: p.count,
+        added: p.id >= 1000, name: p.name, email: p.email, phone: p.phone
+      }))
     ));
-    localStorage.setItem('thaal_added', JSON.stringify(pledges.filter(p => p.id >= 1000)));
   } catch(e) {}
 }
-loadState();
+function loadLocal() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (!s) return;
+    JSON.parse(s).forEach(d => {
+      let p = pledges.find(x => x.id === d.id);
+      if (!p && d.added) {
+        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, num: null, returned: false };
+        pledges.push(p);
+      }
+      if (!p) return;
+      p.num = d.num ?? null;
+      p.returned = !!d.returned;
+      if (d.count != null) p.count = d.count;
+    });
+  } catch(e) {}
+}
+
+// ── Cloud sync (Firestore) ────────────────────────────────────────────────────
+function setSyncStatus(state) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  const wrap = document.getElementById('sync-status');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (state === 'live' ? ' live' : state === 'offline' ? ' offline' : '');
+  if (state === 'live')    { txt.textContent = 'Live';        wrap.title = 'Connected — changes sync to everyone in real time'; }
+  else if (state==='offline'){ txt.textContent = 'Offline';   wrap.title = 'No connection — changes saved locally and will sync when back online'; }
+  else                     { txt.textContent = 'Connecting…'; wrap.title = 'Connecting to shared database…'; }
+}
+
+function pushToCloud(id) {
+  if (!cloudReady || !db) return;
+  const p = pledges.find(x => x.id === id);
+  if (!p) return;
+  const data = { num: p.num, returned: p.returned, count: p.count };
+  if (p.id >= 1000) { data.added = true; data.name = p.name; data.email = p.email||''; data.phone = p.phone||''; }
+  db.collection(CLOUD_COLLECTION).doc(String(id)).set(data, { merge: true })
+    .catch(e => console.warn('Cloud write failed:', e));
+}
+
+function subscribeCloud() {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+    cloudReady = true;
+  } catch(e) {
+    cloudReady = false;
+    setSyncStatus('offline');
+    return;
+  }
+
+  db.collection(CLOUD_COLLECTION).onSnapshot(snap => {
+    snap.forEach(doc => {
+      const id = parseInt(doc.id);
+      const d = doc.data();
+      let p = pledges.find(x => x.id === id);
+      if (!p) {
+        if (!d.added) return;
+        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, num: null, returned: false };
+        pledges.push(p);
+      }
+      if ('num' in d)      p.num = d.num ?? null;
+      if ('returned' in d) p.returned = !!d.returned;
+      if ('count' in d && d.count != null) p.count = d.count;
+      if (d.added) { p.name = d.name||p.name; p.email = d.email||p.email; p.phone = d.phone||p.phone; }
+    });
+    saveLocal();
+    // First snapshot received — connection is established. Reflect live network state.
+    everLive = true;
+    setSyncStatus(navigator.onLine ? 'live' : 'offline');
+    // Avoid clobbering an open input mid-edit; re-render otherwise
+    if (editingId === null && editingCountId === null) render();
+  }, err => {
+    console.warn('Cloud subscribe failed:', err);
+    cloudReady = false;
+    setSyncStatus('offline');
+  });
+}
+
+// Compatibility alias: existing call sites use saveState()
+function saveState() { saveLocal(); }
+
+loadLocal();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function totalThaals()   { return pledges.reduce((s,p) => s + p.count, 0); }
@@ -538,7 +621,7 @@ function saveNumInput(id) {
   if (!raw) {
     const p = pledges.find(x => x.id === id);
     p.num = null; p.returned = false;
-    editingId = null; saveState(); render(); return;
+    editingId = null; saveState(); pushToCloud(id); render(); return;
   }
 
   const n = parseInt(raw);
@@ -557,7 +640,7 @@ function saveNumInput(id) {
 
   if (p.num !== n) p.returned = false; // reset return status if number changed
   p.num = n;
-  editingId = null; saveState(); render();
+  editingId = null; saveState(); pushToCloud(id); render();
 }
 
 function handleNumKey(e, id) {
@@ -574,7 +657,7 @@ function saveCountEdit(id) {
   if (!el) return;
   const val = parseInt(el.value);
   if (!isNaN(val) && val >= 1) { pledges.find(x => x.id === id).count = val; }
-  editingCountId = null; saveState(); render();
+  editingCountId = null; saveState(); pushToCloud(id); render();
 }
 function handleCountKey(e, id) {
   if (e.key === 'Enter')  { e.preventDefault(); saveCountEdit(id); }
@@ -585,7 +668,7 @@ function toggleReturn(id) {
   const p = pledges.find(x => x.id === id);
   if (!p || p.num === null) return;
   p.returned = !p.returned;
-  saveState(); render();
+  saveState(); pushToCloud(id); render();
 }
 
 // ── Metrics ───────────────────────────────────────────────────────────────────
@@ -595,9 +678,10 @@ function renderMetrics() {
   const returned = returnedCount();
   const stillOut = numbered - returned;
   const thaalsReceived = pledges.filter(p => p.num !== null).reduce((s,p) => s + p.count, 0);
+  const thaalsReturned = pledges.filter(p => p.returned).reduce((s,p) => s + p.count, 0);
   const thaalsTotal    = totalThaals();
-  const numPct = thaalsTotal ? Math.round(thaalsReceived/thaalsTotal*100) : 0;
-  const retPct = numbered ? Math.round(returned/numbered*100) : 0;
+  const numPct = thaalsTotal    ? Math.round(thaalsReceived/thaalsTotal*100)    : 0;
+  const retPct = thaalsReceived ? Math.round(thaalsReturned/thaalsReceived*100) : 0;
 
   document.getElementById('num-progress-fill').style.width = numPct + '%';
   document.getElementById('num-progress-pct').textContent  = numPct + '%';
@@ -605,7 +689,7 @@ function renderMetrics() {
 
   document.getElementById('ret-progress-fill').style.width = retPct + '%';
   document.getElementById('ret-progress-pct').textContent  = retPct + '%';
-  document.getElementById('ret-progress-label').textContent = `Returns — ${returned} of ${numbered} returned`;
+  document.getElementById('ret-progress-label').textContent = `Returns — ${thaalsReturned} of ${thaalsReceived} thaals returned`;
 }
 
 // ── Tab state ─────────────────────────────────────────────────────────────────
@@ -803,9 +887,10 @@ function submitAddPledge() {
   const errEl = document.getElementById('ap-err');
   if (!name) { errEl.textContent = 'Name is required.'; return; }
   if (isNaN(count) || count < 1) { errEl.textContent = 'Enter a valid thaal count.'; return; }
-  const newId = 1000 + pledges.filter(p => p.id >= 1000).length;
+  const existingMax = pledges.filter(p => p.id >= 1000).reduce((m,p) => Math.max(m, p.id), 999);
+  const newId = existingMax + 1;
   pledges.push({ id: newId, name, email, phone, count, num: null, returned: false });
-  saveState();
+  saveState(); pushToCloud(newId);
   document.getElementById('add-modal').classList.remove('open');
   acHide();
   render();
@@ -834,7 +919,11 @@ function copyCSV() {
 }
 
 document.addEventListener('click', e => { if (!e.target.closest('.ac-wrap')) acHide(); });
+window.addEventListener('offline', () => setSyncStatus('offline'));
+window.addEventListener('online',  () => setSyncStatus(everLive ? 'live' : 'connecting'));
 render();
+subscribeCloud();
+if (!navigator.onLine) setSyncStatus('offline');
 </script>
 </body>
 </html>
