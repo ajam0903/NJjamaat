@@ -63,6 +63,11 @@
   .sync-dot.live { background: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
   .sync-dot.offline { background: var(--amber); }
   @media (max-width: 680px) { #sync-text { display: none; } }
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 400; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.err { background: var(--red); color: white; }
+  .btn.syncing { opacity: 0.6; pointer-events: none; }
 
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); transition: all 0.15s; }
   .btn:hover { background: var(--surface2); color: var(--text); }
@@ -266,7 +271,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="search-input" id="search" type="text" placeholder="Search by name, email, or #…" oninput="render()">
     </div>
+    <button class="btn" id="sync-sheet-btn" onclick="syncToSheet()" title="Push current data to the Google Sheet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 12a9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9c2.5 0 4.8 1 6.4 2.7M21 3v6h-6"/></svg>
+      Sync to Sheet
+    </button>
   </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
 
   <!-- Pledges tab -->
   <div id="tab-pledges">
@@ -894,6 +906,54 @@ function submitAddPledge() {
   document.getElementById('add-modal').classList.remove('open');
   acHide();
   render();
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast' + (isError ? ' err' : ''); }, 3500);
+}
+
+// ── Sync to Google Sheet ──────────────────────────────────────────────────────
+// Paste the Apps Script Web App URL here after deploying (see setup steps).
+const SHEET_SYNC_URL = 'https://script.google.com/macros/s/AKfycbwtOMN9iitA6cw74Bv8hAfMcB8sic6Cj2MhYs39Jgpiz1TxkFLvfgl7hBnfqFK2AXs6/exec';
+
+function syncToSheet() {
+  if (!SHEET_SYNC_URL || SHEET_SYNC_URL.indexOf('PASTE_') === 0) {
+    showToast('Google Sheet sync not configured yet.', true);
+    return;
+  }
+  const btn = document.getElementById('sync-sheet-btn');
+  btn.classList.add('syncing');
+  showToast('Syncing to Google Sheet…');
+
+  const now = new Date().toLocaleString();
+  const header = ['Name', 'Email', 'Phone', 'Thaals Pledged', 'Received #', 'Returned', 'Last Synced'];
+  const sorted = [...pledges].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  const rows = [header];
+  sorted.forEach(p => rows.push([
+    p.name, p.email || '', p.phone || '', p.count,
+    p.num ?? '', p.returned ? 'Yes' : 'No', now
+  ]));
+
+  fetch(SHEET_SYNC_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ rows })
+  })
+  .then(() => {
+    btn.classList.remove('syncing');
+    showToast(`Synced ${sorted.length} pledgers to Google Sheet ✓`);
+  })
+  .catch(() => {
+    btn.classList.remove('syncing');
+    showToast('Sync failed — check your connection.', true);
+  });
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
