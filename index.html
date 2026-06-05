@@ -58,11 +58,13 @@
   .logo-icon svg { width: 18px; height: 18px; fill: white; }
   .logo-text { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); letter-spacing: -0.3px; }
   .logo-sub { font-size: 11px; color: var(--text3); margin-left: 4px; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  #sync-sheet-btn { white-space: nowrap; }
   .sync-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); font-weight: 500; }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0; transition: background 0.3s; }
   .sync-dot.live { background: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
   .sync-dot.offline { background: var(--amber); }
-  @media (max-width: 680px) { #sync-text { display: none; } }
+  @media (max-width: 680px) { #sync-text { display: none; } .header-right { gap: 10px; } .sync-btn-label { display: none; } #sync-sheet-btn { padding: 7px 10px; } }
   /* Toast */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 400; max-width: 90vw; text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -235,9 +237,15 @@
       <span class="logo-text">Thaal Tracker</span>
       <span class="logo-sub">NJ Jamaat · Muharram 1447</span>
     </div>
-    <div class="sync-status" id="sync-status" title="Connecting to shared database…">
-      <span class="sync-dot" id="sync-dot"></span>
-      <span id="sync-text">Connecting…</span>
+    <div class="header-right">
+      <div class="sync-status" id="sync-status" title="Connecting to shared database…">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span id="sync-text">Connecting…</span>
+      </div>
+      <button class="btn" id="sync-sheet-btn" onclick="syncToSheet()" title="Push current data to the Google Sheet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 12a9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9c2.5 0 4.8 1 6.4 2.7M21 3v6h-6"/></svg>
+        <span class="sync-btn-label">Sync to Sheet</span>
+      </button>
     </div>
   </div>
 </header>
@@ -271,10 +279,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="search-input" id="search" type="text" placeholder="Search by name, email, or #…" oninput="render()">
     </div>
-    <button class="btn" id="sync-sheet-btn" onclick="syncToSheet()" title="Push current data to the Google Sheet">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M21 12a9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9c2.5 0 4.8 1 6.4 2.7M21 3v6h-6"/></svg>
-      Sync to Sheet
-    </button>
   </div>
 
   <!-- Toast -->
