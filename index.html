@@ -1049,7 +1049,8 @@ function sendStatusEmail(id, status) {
   const params = '&action=email&status=' + status +
     '&to=' + encodeURIComponent(p.email) +
     '&name=' + encodeURIComponent(p.name) +
-    '&code=' + encodeURIComponent(p.code || '');
+    '&code=' + encodeURIComponent(p.code || '') +
+    '&count=' + encodeURIComponent(p.count || 1);
   jsonp(params).then(res => {
     if (btn) btn.classList.remove('syncing');
     if (res && res.status === 'ok' && res.sent) {
