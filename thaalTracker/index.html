@@ -70,6 +70,12 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.err { background: var(--red); color: white; }
   .btn.syncing { opacity: 0.6; pointer-events: none; }
+  /* Cell action groups + email button */
+  .cell-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .email-btn { font-size: 12px; padding: 4px 9px; border-radius: 7px; cursor: pointer; border: 1px solid var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .email-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .email-btn.emailed { color: var(--green); border-color: rgba(45,106,79,0.35); background: var(--green-light); }
+  .email-btn.syncing { opacity: 0.5; pointer-events: none; }
 
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); transition: all 0.15s; }
   .btn:hover { background: var(--surface2); color: var(--text); }
@@ -295,7 +301,8 @@
             <span class="sortable" onclick="sortBy('last-name')" id="th-last-name" style="text-transform:uppercase;font-size:11px;letter-spacing:.06em">Last <span class="sort-ind" id="si-last-name"></span></span>
           </th>
           <th class="sortable" onclick="sortBy('count')" id="th-count">Thaals <span class="sort-ind" id="si-count"></span></th>
-          <th class="sortable" onclick="sortBy('num')" id="th-num">Received # <span class="sort-ind" id="si-num"></span></th>
+          <th class="sortable" onclick="sortBy('code')" id="th-code">Thaal # <span class="sort-ind" id="si-code"></span></th>
+          <th class="sortable" onclick="sortBy('received')" id="th-received">Received <span class="sort-ind" id="si-received"></span></th>
           <th class="sortable" onclick="sortBy('returned')" id="th-returned">Returned <span class="sort-ind" id="si-returned"></span></th>
         </tr></thead>
         <tbody id="pledge-tbody"></tbody>
@@ -478,9 +485,44 @@ const pledges = RAW.map((r, i) => ({
   phone: r[1],
   email: r[2],
   count: parseInt(r[3]) || 1,
-  num: null,      // single assigned engraving number
-  returned: false
+  code: null,        // pre-assigned 4-digit thaal code
+  received: false,   // thaal physically received & labeled
+  returned: false,   // thaal returned to owner
+  emailedReceived: false,  // sent the "received" email
+  emailedReturned: false   // sent the "returned" email
 }));
+
+// ── Pre-assigned thaal codes ──────────────────────────────────────────────────
+// Base pledgers get codes 1000, 1010, 1020 … in last-name order. The gaps of 10
+// leave room to slot newly-added pledgers between neighbours without renumbering.
+const CODE_START = 1000, CODE_STEP = 10;
+function byLastThenFirst(a, b) {
+  return lastName(a.name).localeCompare(lastName(b.name)) || firstName(a.name).localeCompare(firstName(b.name));
+}
+function assignBaseCodes() {
+  pledges.filter(p => p.id < 1000)
+    .sort(byLastThenFirst)
+    .forEach((p, i) => { p.code = CODE_START + i * CODE_STEP; });
+}
+function usedCodes() { return new Set(pledges.filter(p => p.code != null).map(p => p.code)); }
+// Assign a code to a newly-added pledger that falls in last-name order within a gap.
+function assignGapCode(np) {
+  const sorted = pledges.filter(p => p.code != null && p.id !== np.id).sort(byLastThenFirst);
+  const used = usedCodes();
+  // find insertion index by last name
+  let idx = sorted.findIndex(p => byLastThenFirst(np, p) < 0);
+  if (idx === -1) idx = sorted.length;
+  const prev = idx > 0 ? sorted[idx - 1].code : (CODE_START - CODE_STEP);
+  const next = idx < sorted.length ? sorted[idx].code : (prev + 2 * CODE_STEP);
+  let cand = Math.floor((prev + next) / 2);
+  if (cand <= prev) cand = prev + 1;
+  // ensure unique; nudge upward then downward within the gap if needed
+  while (used.has(cand) && cand < next) cand++;
+  while (used.has(cand) && cand > prev + 1) cand--;
+  if (used.has(cand)) { cand = (Math.max(...used) || CODE_START) + CODE_STEP; } // fallback: append
+  return cand;
+}
+assignBaseCodes();
 
 // ── Firebase config ───────────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
@@ -500,7 +542,8 @@ function saveLocal() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(
       pledges.map(p => ({
-        id: p.id, num: p.num, returned: p.returned, count: p.count,
+        id: p.id, code: p.code, received: p.received, returned: p.returned, count: p.count,
+        emailedReceived: p.emailedReceived, emailedReturned: p.emailedReturned,
         added: p.id >= 1000, name: p.name, email: p.email, phone: p.phone
       }))
     ));
@@ -513,12 +556,15 @@ function loadLocal() {
     JSON.parse(s).forEach(d => {
       let p = pledges.find(x => x.id === d.id);
       if (!p && d.added) {
-        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, num: null, returned: false };
+        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
         pledges.push(p);
       }
       if (!p) return;
-      p.num = d.num ?? null;
+      if (d.code != null) p.code = d.code;
+      p.received = !!d.received;
       p.returned = !!d.returned;
+      p.emailedReceived = !!d.emailedReceived;
+      p.emailedReturned = !!d.emailedReturned;
       if (d.count != null) p.count = d.count;
     });
   } catch(e) {}
@@ -540,7 +586,8 @@ function pushToCloud(id) {
   if (!cloudReady || !db) return;
   const p = pledges.find(x => x.id === id);
   if (!p) return;
-  const data = { num: p.num, returned: p.returned, count: p.count };
+  const data = { code: p.code, received: p.received, returned: p.returned, count: p.count,
+                 emailedReceived: !!p.emailedReceived, emailedReturned: !!p.emailedReturned };
   if (p.id >= 1000) { data.added = true; data.name = p.name; data.email = p.email||''; data.phone = p.phone||''; }
   db.collection(CLOUD_COLLECTION).doc(String(id)).set(data, { merge: true })
     .catch(e => console.warn('Cloud write failed:', e));
@@ -565,10 +612,11 @@ function subscribeCloud() {
       let p = pledges.find(x => x.id === id);
       if (!p) {
         if (!d.added) return;
-        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, num: null, returned: false };
+        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, code: d.code ?? null, received: false, returned: false };
         pledges.push(p);
       }
-      if ('num' in d)      p.num = d.num ?? null;
+      if ('code' in d && d.code != null) p.code = d.code;
+      if ('received' in d) p.received = !!d.received;
       if ('returned' in d) p.returned = !!d.returned;
       if ('count' in d && d.count != null) p.count = d.count;
       if (d.added) { p.name = d.name||p.name; p.email = d.email||p.email; p.phone = d.phone||p.phone; }
@@ -593,9 +641,8 @@ loadLocal();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function totalThaals()   { return pledges.reduce((s,p) => s + p.count, 0); }
-function numberedCount() { return pledges.filter(p => p.num !== null).length; }
+function receivedCount() { return pledges.filter(p => p.received).length; }
 function returnedCount() { return pledges.filter(p => p.returned).length; }
-function allUsedNums()   { return new Set(pledges.filter(p => p.num !== null).map(p => p.num)); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── Sort state ────────────────────────────────────────────────────────────────
@@ -607,11 +654,12 @@ function sortBy(col) {
   render();
 }
 
-function lastName(name) { const p = name.trim().split(/\s+/); return p[p.length - 1].toLowerCase(); }
-function firstName(name){ return name.trim().split(/\s+/)[0].toLowerCase(); }
+function cleanName(name) { return String(name||'').replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim(); }
+function lastName(name) { const p = cleanName(name).split(/\s+/); return (p[p.length - 1] || '').toLowerCase(); }
+function firstName(name){ return (cleanName(name).split(/\s+/)[0] || '').toLowerCase(); }
 
 function applySortIndicators() {
-  ['first-name','last-name','count','num','returned'].forEach(c => {
+  ['first-name','last-name','count','code','received','returned'].forEach(c => {
     const si = document.getElementById('si-'+c);
     const th = document.getElementById('th-'+c);
     if (si) si.textContent = sortCol === c ? (sortDir === 'asc' ? '▲' : '▼') : '';
@@ -622,46 +670,41 @@ function applySortIndicators() {
 // ── Edit state ────────────────────────────────────────────────────────────────
 let editingId = null, editingCountId = null;
 
-function startNumEdit(id) {
+// Thaal code edit (override the auto-assigned code if ever needed)
+function startCodeEdit(id) {
   editingCountId = null; editingId = id; render();
   setTimeout(() => { const el = document.getElementById('ni-'+id); if (el) { el.focus(); el.select(); } }, 0);
 }
-function cancelNumEdit() { editingId = null; render(); }
+function cancelCodeEdit() { editingId = null; render(); }
 
-function saveNumInput(id) {
+function saveCodeInput(id) {
   const el = document.getElementById('ni-'+id);
   if (!el) return;
   const errEl = document.getElementById('ni-err-'+id);
   const raw = el.value.trim();
-
-  if (!raw) {
-    const p = pledges.find(x => x.id === id);
-    p.num = null; p.returned = false;
-    editingId = null; saveState(); pushToCloud(id); render(); return;
-  }
-
   const n = parseInt(raw);
   if (isNaN(n) || n < 1 || String(n) !== raw) {
-    if (errEl) errEl.textContent = 'Enter a single whole number (e.g. 42)'; return;
+    if (errEl) errEl.textContent = 'Enter a whole number (e.g. 1010)'; return;
   }
-
-  const used = allUsedNums();
   const p = pledges.find(x => x.id === id);
-  if (p.num !== null) used.delete(p.num); // allow keeping own number
-  if (used.has(n)) {
-    const owner = pledges.find(x => x.num === n);
-    if (errEl) errEl.textContent = `#${n} is already assigned to ${owner ? owner.name : 'someone else'}`;
-    return;
-  }
-
-  if (p.num !== n) p.returned = false; // reset return status if number changed
-  p.num = n;
+  const clash = pledges.find(x => x.id !== id && x.code === n);
+  if (clash) { if (errEl) errEl.textContent = `Code ${n} is already used by ${clash.name}`; return; }
+  p.code = n;
   editingId = null; saveState(); pushToCloud(id); render();
 }
 
-function handleNumKey(e, id) {
-  if (e.key === 'Enter')  { e.preventDefault(); saveNumInput(id); }
-  if (e.key === 'Escape') { cancelNumEdit(); }
+function handleCodeKey(e, id) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveCodeInput(id); }
+  if (e.key === 'Escape') { cancelCodeEdit(); }
+}
+
+// Toggle received / returned status
+function toggleReceived(id) {
+  const p = pledges.find(x => x.id === id);
+  if (!p) return;
+  p.received = !p.received;
+  if (!p.received) p.returned = false; // can't be returned if not received
+  saveState(); pushToCloud(id); render();
 }
 
 function startCountEdit(id) {
@@ -682,18 +725,14 @@ function handleCountKey(e, id) {
 
 function toggleReturn(id) {
   const p = pledges.find(x => x.id === id);
-  if (!p || p.num === null) return;
+  if (!p || !p.received) return;
   p.returned = !p.returned;
   saveState(); pushToCloud(id); render();
 }
 
 // ── Metrics ───────────────────────────────────────────────────────────────────
 function renderMetrics() {
-  const total    = pledges.length;
-  const numbered = numberedCount();
-  const returned = returnedCount();
-  const stillOut = numbered - returned;
-  const thaalsReceived = pledges.filter(p => p.num !== null).reduce((s,p) => s + p.count, 0);
+  const thaalsReceived = pledges.filter(p => p.received).reduce((s,p) => s + p.count, 0);
   const thaalsReturned = pledges.filter(p => p.returned).reduce((s,p) => s + p.count, 0);
   const thaalsTotal    = totalThaals();
   const numPct = thaalsTotal    ? Math.round(thaalsReceived/thaalsTotal*100)    : 0;
@@ -728,7 +767,7 @@ function renderPledges() {
 
   let rows = pledges.filter(p =>
     !q || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)
-      || p.phone.includes(q) || (p.num !== null && String(p.num).includes(q))
+      || p.phone.includes(q) || (p.code != null && String(p.code).includes(q))
   );
 
   rows.sort((a, b) => {
@@ -736,7 +775,8 @@ function renderPledges() {
     if      (sortCol === 'first-name') { va = firstName(a.name); vb = firstName(b.name); }
     else if (sortCol === 'last-name')  { va = lastName(a.name);  vb = lastName(b.name); }
     else if (sortCol === 'count')      { va = a.count; vb = b.count; }
-    else if (sortCol === 'num')        { va = a.num ?? 99999; vb = b.num ?? 99999; }
+    else if (sortCol === 'code')       { va = a.code ?? 99999; vb = b.code ?? 99999; }
+    else if (sortCol === 'received')   { va = a.received ? 1 : 0; vb = b.received ? 1 : 0; }
     else if (sortCol === 'returned')   { va = a.returned ? 1 : 0; vb = b.returned ? 1 : 0; }
     else return 0;
     if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
@@ -745,7 +785,7 @@ function renderPledges() {
 
   if (!rows.length) {
     document.getElementById('pledge-tbody').innerHTML =
-      '<tr><td colspan="6"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
+      '<tr><td colspan="5"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
     return;
   }
 
@@ -755,32 +795,46 @@ function renderPledges() {
       ? `<input class="count-input" id="ci-${p.id}" type="number" min="1" max="50" value="${p.count}" onkeydown="handleCountKey(event,${p.id})" onblur="saveCountEdit(${p.id})">`
       : `<span class="badge badge-gray count-badge-edit" onclick="startCountEdit(${p.id})" title="Click to edit">${p.count}</span>`;
 
-    // Number cell
-    let numCell;
+    // Thaal code cell (pre-assigned; editable via pencil)
+    let codeCell;
     if (editingId === p.id) {
-      numCell = `<div class="num-input-wrap">
+      codeCell = `<div class="num-input-wrap">
         <div class="num-input-row">
           <input class="num-input" id="ni-${p.id}" type="number" min="1"
-            value="${p.num ?? ''}" placeholder="e.g. 42"
-            onkeydown="handleNumKey(event,${p.id})">
-          <button class="cancel-btn" onclick="cancelNumEdit()">✕</button>
+            value="${p.code ?? ''}" placeholder="e.g. 1010"
+            onkeydown="handleCodeKey(event,${p.id})">
+          <button class="cancel-btn" onclick="cancelCodeEdit()">✕</button>
         </div>
-        <span class="num-input-hint">Enter engraved # · Enter to save · Esc to cancel</span>
+        <span class="num-input-hint">Thaal code · Enter to save · Esc to cancel</span>
         <span class="num-input-err" id="ni-err-${p.id}"></span>
       </div>`;
-    } else if (p.num !== null) {
-      numCell = `<span class="num-tag${p.returned?' returned':''}">#${p.num}</span>
-        <button class="edit-btn" onclick="startNumEdit(${p.id})" title="Edit">✎</button>`;
     } else {
-      numCell = `<button class="assign-btn" onclick="startNumEdit(${p.id})">Mark Received</button>`;
+      codeCell = `<span class="num-tag${p.returned?' returned':''}">${p.code ?? '—'}</span>
+        <button class="edit-btn" onclick="startCodeEdit(${p.id})" title="Edit code">✎</button>`;
     }
 
-    // Return cell
-    const retCell = p.num !== null
-      ? `<button class="return-btn${p.returned?' is-returned':''}" onclick="toggleReturn(${p.id})">
-           ${p.returned ? '✓ Returned' : 'Mark Returned'}
-         </button>`
-      : `<span style="color:var(--text3);font-size:12px">—</span>`;
+    // Received cell (+ email button once received)
+    const recEmail = p.received
+      ? `<button class="email-btn${p.emailedReceived?' emailed':''}" id="email-received-${p.id}" onclick="sendStatusEmail(${p.id},'received')" title="${p.emailedReceived?'Re-send code email':'Email this pledger their thaal code'}">${p.emailedReceived ? '✓ ✉' : '✉'}</button>`
+      : '';
+    const recCell = `<div class="cell-actions">
+        <button class="return-btn${p.received?' is-returned':''}" onclick="toggleReceived(${p.id})">${p.received ? '✓ Received' : 'Mark Received'}</button>
+        ${recEmail}
+      </div>`;
+
+    // Returned cell — only available once received (+ email button once returned)
+    let retCell;
+    if (p.received) {
+      const retEmail = p.returned
+        ? `<button class="email-btn${p.emailedReturned?' emailed':''}" id="email-returned-${p.id}" onclick="sendStatusEmail(${p.id},'returned')" title="${p.emailedReturned?'Re-send return email':'Email this pledger their return confirmation'}">${p.emailedReturned ? '✓ ✉' : '✉'}</button>`
+        : '';
+      retCell = `<div class="cell-actions">
+          <button class="return-btn${p.returned?' is-returned':''}" onclick="toggleReturn(${p.id})">${p.returned ? '✓ Returned' : 'Mark Returned'}</button>
+          ${retEmail}
+        </div>`;
+    } else {
+      retCell = `<span style="color:var(--text3);font-size:12px">—</span>`;
+    }
 
     return `<tr>
       <td class="name-cell">
@@ -788,7 +842,8 @@ function renderPledges() {
         <div class="name-sub">${esc(p.email)}${p.phone && p.phone !== '—' ? ' · ' + esc(p.phone) : ''}</div>
       </td>
       <td>${countCell}</td>
-      <td>${numCell}</td>
+      <td>${codeCell}</td>
+      <td>${recCell}</td>
       <td>${retCell}</td>
     </tr>`;
   }).join('');
@@ -905,11 +960,14 @@ function submitAddPledge() {
   if (isNaN(count) || count < 1) { errEl.textContent = 'Enter a valid thaal count.'; return; }
   const existingMax = pledges.filter(p => p.id >= 1000).reduce((m,p) => Math.max(m, p.id), 999);
   const newId = existingMax + 1;
-  pledges.push({ id: newId, name, email, phone, count, num: null, returned: false });
+  const np = { id: newId, name, email, phone, count, code: null, received: false, returned: false };
+  np.code = assignGapCode(np);   // slot into last-name order within the gap of 10
+  pledges.push(np);
   saveState(); pushToCloud(newId);
   document.getElementById('add-modal').classList.remove('open');
   acHide();
   render();
+  showToast(`Added ${name} — assigned thaal #${np.code}`);
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
@@ -936,12 +994,12 @@ function syncToSheet() {
   showToast('Syncing to Google Sheet…');
 
   const now = new Date().toLocaleString();
-  const header = ['Name', 'Email', 'Phone', 'Thaals Pledged', 'Received #', 'Returned', 'Last Synced'];
-  const sorted = [...pledges].sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  const header = ['Thaal #', 'Name', 'Email', 'Phone', 'Thaals Pledged', 'Received', 'Returned', 'Last Synced'];
+  const sorted = [...pledges].sort((a, b) => (a.code ?? 99999) - (b.code ?? 99999));
   const rows = [header];
   sorted.forEach(p => rows.push([
-    p.name, p.email || '', p.phone || '', p.count,
-    p.num ?? '', p.returned ? 'Yes' : 'No', now
+    p.code ?? '', p.name, p.email || '', p.phone || '', p.count,
+    p.received ? 'Yes' : 'No', p.returned ? 'Yes' : 'No', now
   ]));
 
   fetch(SHEET_SYNC_URL, {
@@ -950,9 +1008,17 @@ function syncToSheet() {
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ rows })
   })
-  .then(() => {
+  .then(() => new Promise(r => setTimeout(r, 1200)))  // give the script time to write
+  .then(() => verifySheet())                          // read back to confirm
+  .then(res => {
     btn.classList.remove('syncing');
-    showToast(`Synced ${sorted.length} pledgers to Google Sheet ✓`);
+    if (res && res.status === 'ok' && res.count === sorted.length) {
+      showToast(`Synced ${res.count} pledgers to Google Sheet ✓`);
+    } else if (res && res.status === 'ok') {
+      showToast(`Synced — sheet now has ${res.count} rows.`);
+    } else {
+      showToast('Sent, but could not confirm. Check the "Thaal Tracker" tab.', true);
+    }
   })
   .catch(() => {
     btn.classList.remove('syncing');
@@ -960,12 +1026,54 @@ function syncToSheet() {
   });
 }
 
+// Generic JSONP call to the Apps Script (avoids CORS for reads + email).
+function jsonp(extraParams) {
+  return new Promise(resolve => {
+    const cb = 'thaalCb' + Math.random().toString(36).slice(2);
+    const s = document.createElement('script');
+    let done = false;
+    const cleanup = () => { try { delete window[cb]; } catch(e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); };
+    window[cb] = data => { if (!done) { done = true; resolve(data); cleanup(); } };
+    s.onerror = () => { if (!done) { done = true; resolve(null); cleanup(); } };
+    setTimeout(() => { if (!done) { done = true; resolve(null); cleanup(); } }, 8000);
+    s.src = SHEET_SYNC_URL + '?callback=' + cb + '&t=' + Date.now() + (extraParams || '');
+    document.body.appendChild(s);
+  });
+}
+function verifySheet() { return jsonp(''); }
+
+// ── Email a pledger their status (manual, per pledger) ────────────────────────
+function sendStatusEmail(id, status) {
+  const p = pledges.find(x => x.id === id);
+  if (!p) return;
+  if (!p.email || !/@/.test(p.email)) { showToast(`No valid email on file for ${p.name}.`, true); return; }
+  if (!SHEET_SYNC_URL || SHEET_SYNC_URL.indexOf('PASTE_') === 0) { showToast('Email sync not configured yet.', true); return; }
+  const btn = document.getElementById('email-' + status + '-' + id);
+  if (btn) btn.classList.add('syncing');
+  showToast(`Emailing ${p.name}…`);
+  const params = '&action=email&status=' + status +
+    '&to=' + encodeURIComponent(p.email) +
+    '&name=' + encodeURIComponent(p.name) +
+    '&code=' + encodeURIComponent(p.code || '');
+  jsonp(params).then(res => {
+    if (btn) btn.classList.remove('syncing');
+    if (res && res.status === 'ok' && res.sent) {
+      if (status === 'returned') p.emailedReturned = true; else p.emailedReceived = true;
+      saveState(); pushToCloud(id); render();
+      const left = (res.remaining != null) ? ` · ${res.remaining} emails left today` : '';
+      showToast(`Emailed ${p.name} ✓${left}`);
+    } else {
+      showToast(`Email failed${res && res.message ? ': ' + res.message : ' — check the Apps Script deployment.'}`, true);
+    }
+  });
+}
+
 // ── Export ────────────────────────────────────────────────────────────────────
 function openExport() {
-  const header = 'Name,Email,Phone,Thaals Pledged,Assigned Number,Returned';
-  const rows = pledges.map(p => [
-    `"${p.name}"`, `"${p.email}"`, `"${p.phone}"`,
-    p.count, p.num ?? '', p.returned ? 'Yes' : 'No'
+  const header = 'Thaal #,Name,Email,Phone,Thaals Pledged,Received,Returned';
+  const rows = [...pledges].sort((a,b)=>(a.code ?? 99999)-(b.code ?? 99999)).map(p => [
+    p.code ?? '', `"${p.name}"`, `"${p.email}"`, `"${p.phone}"`,
+    p.count, p.received ? 'Yes' : 'No', p.returned ? 'Yes' : 'No'
   ].join(','));
   document.getElementById('export-area').value = [header, ...rows].join('\n');
   document.getElementById('export-modal').classList.add('open');
