@@ -145,6 +145,11 @@
   /* ── Number tag ── */
   .num-tag { font-size: 15px; font-weight: 700; padding: 4px 14px; border-radius: 8px; font-family: 'DM Sans', monospace; background: var(--accent-light); color: var(--accent-dark); border: 1px solid rgba(184,92,42,0.3); display: inline-block; letter-spacing: 0.02em; }
   .num-tag.returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.3); text-decoration: line-through; opacity: 0.75; }
+  .num-tag.clickable { cursor: pointer; }
+  .num-tag.clickable:hover { border-color: var(--accent); filter: brightness(0.97); }
+  /* Thaals-count tag: same size/format as the code tag but neutral */
+  .num-tag.count-tag { background: var(--surface2); color: var(--text2); border-color: var(--border-strong); cursor: pointer; }
+  .num-tag.count-tag:hover { border-color: var(--accent); color: var(--accent); }
 
   /* ── Number input ── */
   .num-input-wrap { display: flex; flex-direction: column; gap: 3px; }
@@ -167,10 +172,13 @@
   .cancel-btn:hover { border-color: var(--red); color: var(--red); }
 
   /* ── Return button ── */
-  .return-btn { font-size: 11px; padding: 4px 10px; border-radius: 7px; cursor: pointer; border: 1px solid var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
-  .return-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
-  .return-btn.is-returned { background: var(--green-light); color: var(--green); border-color: rgba(45,106,79,0.35); font-weight: 500; }
-  .return-btn.is-returned:hover { background: var(--green-light); opacity: 0.75; }
+  /* Status button — cycles Mark Received → Received (orange) → Returned (green) */
+  .status-btn { font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-strong); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
+  .status-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .status-btn.st-received { background: var(--accent); color: #fff; border-color: transparent; }
+  .status-btn.st-received:hover { background: var(--accent-dark); color: #fff; }
+  .status-btn.st-returned { background: var(--green); color: #fff; border-color: transparent; }
+  .status-btn.st-returned:hover { background: #1f5038; color: #fff; }
 
   /* ── Empty state ── */
   .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
@@ -302,8 +310,7 @@
           </th>
           <th class="sortable" onclick="sortBy('count')" id="th-count">Thaals <span class="sort-ind" id="si-count"></span></th>
           <th class="sortable" onclick="sortBy('code')" id="th-code">Thaal # <span class="sort-ind" id="si-code"></span></th>
-          <th class="sortable" onclick="sortBy('received')" id="th-received">Received <span class="sort-ind" id="si-received"></span></th>
-          <th class="sortable" onclick="sortBy('returned')" id="th-returned">Returned <span class="sort-ind" id="si-returned"></span></th>
+          <th class="sortable" onclick="sortBy('status')" id="th-status">Status <span class="sort-ind" id="si-status"></span></th>
         </tr></thead>
         <tbody id="pledge-tbody"></tbody>
       </table>
@@ -659,7 +666,7 @@ function lastName(name) { const p = cleanName(name).split(/\s+/); return (p[p.le
 function firstName(name){ return (cleanName(name).split(/\s+/)[0] || '').toLowerCase(); }
 
 function applySortIndicators() {
-  ['first-name','last-name','count','code','received','returned'].forEach(c => {
+  ['first-name','last-name','count','code','status'].forEach(c => {
     const si = document.getElementById('si-'+c);
     const th = document.getElementById('th-'+c);
     if (si) si.textContent = sortCol === c ? (sortDir === 'asc' ? '▲' : '▼') : '';
@@ -698,12 +705,18 @@ function handleCodeKey(e, id) {
   if (e.key === 'Escape') { cancelCodeEdit(); }
 }
 
-// Toggle received / returned status
-function toggleReceived(id) {
+// Single cycling status: not received → Received → Returned → (reset) not received
+function cycleStatus(id) {
   const p = pledges.find(x => x.id === id);
   if (!p) return;
-  p.received = !p.received;
-  if (!p.received) p.returned = false; // can't be returned if not received
+  if (!p.received) {
+    p.received = true; p.returned = false;
+  } else if (!p.returned) {
+    p.returned = true;
+  } else {
+    p.received = false; p.returned = false;
+    p.emailedReceived = false; p.emailedReturned = false;
+  }
   saveState(); pushToCloud(id); render();
 }
 
@@ -721,13 +734,6 @@ function saveCountEdit(id) {
 function handleCountKey(e, id) {
   if (e.key === 'Enter')  { e.preventDefault(); saveCountEdit(id); }
   if (e.key === 'Escape') { editingCountId = null; render(); }
-}
-
-function toggleReturn(id) {
-  const p = pledges.find(x => x.id === id);
-  if (!p || !p.received) return;
-  p.returned = !p.returned;
-  saveState(); pushToCloud(id); render();
 }
 
 // ── Metrics ───────────────────────────────────────────────────────────────────
@@ -776,8 +782,7 @@ function renderPledges() {
     else if (sortCol === 'last-name')  { va = lastName(a.name);  vb = lastName(b.name); }
     else if (sortCol === 'count')      { va = a.count; vb = b.count; }
     else if (sortCol === 'code')       { va = a.code ?? 99999; vb = b.code ?? 99999; }
-    else if (sortCol === 'received')   { va = a.received ? 1 : 0; vb = b.received ? 1 : 0; }
-    else if (sortCol === 'returned')   { va = a.returned ? 1 : 0; vb = b.returned ? 1 : 0; }
+    else if (sortCol === 'status')     { va = a.returned?2:a.received?1:0; vb = b.returned?2:b.received?1:0; }
     else return 0;
     if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
     return sortDir === 'asc' ? va - vb : vb - va;
@@ -785,56 +790,47 @@ function renderPledges() {
 
   if (!rows.length) {
     document.getElementById('pledge-tbody').innerHTML =
-      '<tr><td colspan="5"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
+      '<tr><td colspan="4"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
     return;
   }
 
   document.getElementById('pledge-tbody').innerHTML = rows.map(p => {
-    // Count cell
+    // Count cell — same size/format as the code tag, click to edit
     const countCell = editingCountId === p.id
-      ? `<input class="count-input" id="ci-${p.id}" type="number" min="1" max="50" value="${p.count}" onkeydown="handleCountKey(event,${p.id})" onblur="saveCountEdit(${p.id})">`
-      : `<span class="badge badge-gray count-badge-edit" onclick="startCountEdit(${p.id})" title="Click to edit">${p.count}</span>`;
+      ? `<input class="num-input" id="ci-${p.id}" type="number" min="1" max="50" value="${p.count}" onkeydown="handleCountKey(event,${p.id})" onblur="saveCountEdit(${p.id})" style="width:72px">`
+      : `<span class="num-tag count-tag" onclick="startCountEdit(${p.id})" title="Click to edit">${p.count}</span>`;
 
-    // Thaal code cell (pre-assigned; editable via pencil)
+    // Thaal code cell — click the number to edit (no pencil)
     let codeCell;
     if (editingId === p.id) {
       codeCell = `<div class="num-input-wrap">
         <div class="num-input-row">
           <input class="num-input" id="ni-${p.id}" type="number" min="1"
             value="${p.code ?? ''}" placeholder="e.g. 1010"
-            onkeydown="handleCodeKey(event,${p.id})">
+            onkeydown="handleCodeKey(event,${p.id})" onblur="saveCodeInput(${p.id})">
           <button class="cancel-btn" onclick="cancelCodeEdit()">✕</button>
         </div>
-        <span class="num-input-hint">Thaal code · Enter to save · Esc to cancel</span>
+        <span class="num-input-hint">Enter to save · Esc to cancel</span>
         <span class="num-input-err" id="ni-err-${p.id}"></span>
       </div>`;
     } else {
-      codeCell = `<span class="num-tag${p.returned?' returned':''}">${p.code ?? '—'}</span>
-        <button class="edit-btn" onclick="startCodeEdit(${p.id})" title="Edit code">✎</button>`;
+      codeCell = `<span class="num-tag clickable${p.returned?' returned':''}" onclick="startCodeEdit(${p.id})" title="Click to edit">${p.code ?? '—'}</span>`;
     }
 
-    // Received cell (+ email button once received)
-    const recEmail = p.received
-      ? `<button class="email-btn${p.emailedReceived?' emailed':''}" id="email-received-${p.id}" onclick="sendStatusEmail(${p.id},'received')" title="${p.emailedReceived?'Re-send code email':'Email this pledger their thaal code'}">${p.emailedReceived ? '✓ ✉' : '✉'}</button>`
-      : '';
-    const recCell = `<div class="cell-actions">
-        <button class="return-btn${p.received?' is-returned':''}" onclick="toggleReceived(${p.id})">${p.received ? '✓ Received' : 'Mark Received'}</button>
-        ${recEmail}
-      </div>`;
+    // Status cell — single cycling button: Mark Received → Received (orange) → Returned (green)
+    let statusBtn;
+    if (p.returned)       statusBtn = `<button class="status-btn st-returned" onclick="cycleStatus(${p.id})" title="Click to reset">Returned</button>`;
+    else if (p.received)  statusBtn = `<button class="status-btn st-received" onclick="cycleStatus(${p.id})" title="Click to mark returned">Received</button>`;
+    else                  statusBtn = `<button class="status-btn" onclick="cycleStatus(${p.id})" title="Click to mark received">Mark Received</button>`;
 
-    // Returned cell — only available once received (+ email button once returned)
-    let retCell;
-    if (p.received) {
-      const retEmail = p.returned
-        ? `<button class="email-btn${p.emailedReturned?' emailed':''}" id="email-returned-${p.id}" onclick="sendStatusEmail(${p.id},'returned')" title="${p.emailedReturned?'Re-send return email':'Email this pledger their return confirmation'}">${p.emailedReturned ? '✓ ✉' : '✉'}</button>`
-        : '';
-      retCell = `<div class="cell-actions">
-          <button class="return-btn${p.returned?' is-returned':''}" onclick="toggleReturn(${p.id})">${p.returned ? '✓ Returned' : 'Mark Returned'}</button>
-          ${retEmail}
-        </div>`;
-    } else {
-      retCell = `<span style="color:var(--text3);font-size:12px">—</span>`;
+    // Email button appears once received/returned; sends the matching message
+    let emailBtn = '';
+    if (p.returned) {
+      emailBtn = `<button class="email-btn${p.emailedReturned?' emailed':''}" id="email-${p.id}" onclick="sendStatusEmail(${p.id},'returned')" title="${p.emailedReturned?'Return email sent — click to re-send':'Email return confirmation'}">${p.emailedReturned ? '✓ ✉' : '✉'}</button>`;
+    } else if (p.received) {
+      emailBtn = `<button class="email-btn${p.emailedReceived?' emailed':''}" id="email-${p.id}" onclick="sendStatusEmail(${p.id},'received')" title="${p.emailedReceived?'Code email sent — click to re-send':'Email thaal code'}">${p.emailedReceived ? '✓ ✉' : '✉'}</button>`;
     }
+    const statusCell = `<div class="cell-actions">${statusBtn}${emailBtn}</div>`;
 
     return `<tr>
       <td class="name-cell">
@@ -843,8 +839,7 @@ function renderPledges() {
       </td>
       <td>${countCell}</td>
       <td>${codeCell}</td>
-      <td>${recCell}</td>
-      <td>${retCell}</td>
+      <td>${statusCell}</td>
     </tr>`;
   }).join('');
 }
@@ -1062,8 +1057,12 @@ function sendStatusEmail(id, status) {
       saveState(); pushToCloud(id); render();
       const left = (res.remaining != null) ? ` · ${res.remaining} emails left today` : '';
       showToast(`Emailed ${p.name} ✓${left}`);
+    } else if (res && res.status === 'ok' && !res.sent) {
+      showToast('Email needs the updated Apps Script — re-deploy a New version.', true);
+    } else if (res && res.message) {
+      showToast('Email error: ' + res.message, true);
     } else {
-      showToast(`Email failed${res && res.message ? ': ' + res.message : ' — check the Apps Script deployment.'}`, true);
+      showToast('Email failed — check the Apps Script deployment.', true);
     }
   });
 }
