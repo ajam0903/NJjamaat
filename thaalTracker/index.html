@@ -150,6 +150,7 @@
   /* Thaals-count tag: same size/format as the code tag but neutral */
   .num-tag.count-tag { background: var(--surface2); color: var(--text2); border-color: var(--border-strong); cursor: pointer; }
   .num-tag.count-tag:hover { border-color: var(--accent); color: var(--accent); }
+  .num-tag.count-tag.zero { color: var(--text3); opacity: 0.55; }
 
   /* ── Number input ── */
   .num-input-wrap { display: flex; flex-direction: column; gap: 3px; }
@@ -309,6 +310,7 @@
             <span class="sortable" onclick="sortBy('last-name')" id="th-last-name" style="text-transform:uppercase;font-size:11px;letter-spacing:.06em">Last <span class="sort-ind" id="si-last-name"></span></span>
           </th>
           <th class="sortable" onclick="sortBy('count')" id="th-count">Thaals <span class="sort-ind" id="si-count"></span></th>
+          <th class="sortable" onclick="sortBy('kundli')" id="th-kundli">Kundlis <span class="sort-ind" id="si-kundli"></span></th>
           <th class="sortable" onclick="sortBy('code')" id="th-code">Thaal # <span class="sort-ind" id="si-code"></span></th>
           <th class="sortable" onclick="sortBy('status')" id="th-status">Status <span class="sort-ind" id="si-status"></span></th>
         </tr></thead>
@@ -363,6 +365,10 @@
       <div class="form-group">
         <label class="form-label">Thaals pledged</label>
         <input class="form-input" id="ap-count" type="number" min="1" max="50" value="1" style="width:90px">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kundlis pledged</label>
+        <input class="form-input" id="ap-kundli" type="number" min="0" max="50" value="0" style="width:90px">
       </div>
     </div>
     <div id="ap-err" style="font-size:12px;color:var(--red);margin-bottom:8px;min-height:16px"></div>
@@ -491,10 +497,11 @@ const pledges = RAW.map((r, i) => ({
   name: r[0],
   phone: r[1],
   email: r[2],
-  count: parseInt(r[3]) || 1,
+  count: parseInt(r[3]) || 1,   // thaals pledged
+  kundli: 0,         // kundlis pledged
   code: null,        // pre-assigned 4-digit thaal code
-  received: false,   // thaal physically received & labeled
-  returned: false,   // thaal returned to owner
+  received: false,   // items physically received & labeled
+  returned: false,   // items returned to owner
   emailedReceived: false,  // sent the "received" email
   emailedReturned: false   // sent the "returned" email
 }));
@@ -549,7 +556,7 @@ function saveLocal() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(
       pledges.map(p => ({
-        id: p.id, code: p.code, received: p.received, returned: p.returned, count: p.count,
+        id: p.id, code: p.code, received: p.received, returned: p.returned, count: p.count, kundli: p.kundli || 0,
         emailedReceived: p.emailedReceived, emailedReturned: p.emailedReturned,
         added: p.id >= 1000, name: p.name, email: p.email, phone: p.phone
       }))
@@ -563,7 +570,7 @@ function loadLocal() {
     JSON.parse(s).forEach(d => {
       let p = pledges.find(x => x.id === d.id);
       if (!p && d.added) {
-        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
+        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
         pledges.push(p);
       }
       if (!p) return;
@@ -573,6 +580,7 @@ function loadLocal() {
       p.emailedReceived = !!d.emailedReceived;
       p.emailedReturned = !!d.emailedReturned;
       if (d.count != null) p.count = d.count;
+      if (d.kundli != null) p.kundli = d.kundli;
     });
   } catch(e) {}
 }
@@ -593,7 +601,7 @@ function pushToCloud(id) {
   if (!cloudReady || !db) return;
   const p = pledges.find(x => x.id === id);
   if (!p) return;
-  const data = { code: p.code, received: p.received, returned: p.returned, count: p.count,
+  const data = { code: p.code, received: p.received, returned: p.returned, count: p.count, kundli: p.kundli || 0,
                  emailedReceived: !!p.emailedReceived, emailedReturned: !!p.emailedReturned };
   if (p.id >= 1000) { data.added = true; data.name = p.name; data.email = p.email||''; data.phone = p.phone||''; }
   db.collection(CLOUD_COLLECTION).doc(String(id)).set(data, { merge: true })
@@ -619,13 +627,16 @@ function subscribeCloud() {
       let p = pledges.find(x => x.id === id);
       if (!p) {
         if (!d.added) return;
-        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, code: d.code ?? null, received: false, returned: false };
+        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
         pledges.push(p);
       }
       if ('code' in d && d.code != null) p.code = d.code;
       if ('received' in d) p.received = !!d.received;
       if ('returned' in d) p.returned = !!d.returned;
       if ('count' in d && d.count != null) p.count = d.count;
+      if ('kundli' in d && d.kundli != null) p.kundli = d.kundli;
+      if ('emailedReceived' in d) p.emailedReceived = !!d.emailedReceived;
+      if ('emailedReturned' in d) p.emailedReturned = !!d.emailedReturned;
       if (d.added) { p.name = d.name||p.name; p.email = d.email||p.email; p.phone = d.phone||p.phone; }
     });
     saveLocal();
@@ -633,7 +644,7 @@ function subscribeCloud() {
     everLive = true;
     setSyncStatus(navigator.onLine ? 'live' : 'offline');
     // Avoid clobbering an open input mid-edit; re-render otherwise
-    if (editingId === null && editingCountId === null) render();
+    if (editingId === null && editingCountId === null && editingKundliId === null) render();
   }, err => {
     console.warn('Cloud subscribe failed:', err);
     cloudReady = false;
@@ -666,7 +677,7 @@ function lastName(name) { const p = cleanName(name).split(/\s+/); return (p[p.le
 function firstName(name){ return (cleanName(name).split(/\s+/)[0] || '').toLowerCase(); }
 
 function applySortIndicators() {
-  ['first-name','last-name','count','code','status'].forEach(c => {
+  ['first-name','last-name','count','kundli','code','status'].forEach(c => {
     const si = document.getElementById('si-'+c);
     const th = document.getElementById('th-'+c);
     if (si) si.textContent = sortCol === c ? (sortDir === 'asc' ? '▲' : '▼') : '';
@@ -675,11 +686,11 @@ function applySortIndicators() {
 }
 
 // ── Edit state ────────────────────────────────────────────────────────────────
-let editingId = null, editingCountId = null;
+let editingId = null, editingCountId = null, editingKundliId = null;
 
 // Thaal code edit (override the auto-assigned code if ever needed)
 function startCodeEdit(id) {
-  editingCountId = null; editingId = id; render();
+  editingCountId = null; editingKundliId = null; editingId = id; render();
   setTimeout(() => { const el = document.getElementById('ni-'+id); if (el) { el.focus(); el.select(); } }, 0);
 }
 function cancelCodeEdit() { editingId = null; render(); }
@@ -721,7 +732,7 @@ function cycleStatus(id) {
 }
 
 function startCountEdit(id) {
-  editingId = null; editingCountId = id; render();
+  editingId = null; editingKundliId = null; editingCountId = id; render();
   setTimeout(() => { const el = document.getElementById('ci-'+id); if (el) { el.focus(); el.select(); } }, 0);
 }
 function saveCountEdit(id) {
@@ -734,6 +745,22 @@ function saveCountEdit(id) {
 function handleCountKey(e, id) {
   if (e.key === 'Enter')  { e.preventDefault(); saveCountEdit(id); }
   if (e.key === 'Escape') { editingCountId = null; render(); }
+}
+
+function startKundliEdit(id) {
+  editingId = null; editingCountId = null; editingKundliId = id; render();
+  setTimeout(() => { const el = document.getElementById('ki-'+id); if (el) { el.focus(); el.select(); } }, 0);
+}
+function saveKundliEdit(id) {
+  const el = document.getElementById('ki-'+id);
+  if (!el) return;
+  const val = parseInt(el.value);
+  pledges.find(x => x.id === id).kundli = (!isNaN(val) && val >= 0) ? val : 0;
+  editingKundliId = null; saveState(); pushToCloud(id); render();
+}
+function handleKundliKey(e, id) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveKundliEdit(id); }
+  if (e.key === 'Escape') { editingKundliId = null; render(); }
 }
 
 // ── Metrics ───────────────────────────────────────────────────────────────────
@@ -756,7 +783,7 @@ function renderMetrics() {
 // ── Tab state ─────────────────────────────────────────────────────────────────
 let activeTab = 'pledges';
 function switchTab(tab, btn) {
-  activeTab = tab; editingId = null; editingCountId = null;
+  activeTab = tab; editingId = null; editingCountId = null; editingKundliId = null;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('tab-pledges').style.display = tab === 'pledges' ? '' : 'none';
@@ -781,6 +808,7 @@ function renderPledges() {
     if      (sortCol === 'first-name') { va = firstName(a.name); vb = firstName(b.name); }
     else if (sortCol === 'last-name')  { va = lastName(a.name);  vb = lastName(b.name); }
     else if (sortCol === 'count')      { va = a.count; vb = b.count; }
+    else if (sortCol === 'kundli')     { va = a.kundli || 0; vb = b.kundli || 0; }
     else if (sortCol === 'code')       { va = a.code ?? 99999; vb = b.code ?? 99999; }
     else if (sortCol === 'status')     { va = a.returned?2:a.received?1:0; vb = b.returned?2:b.received?1:0; }
     else return 0;
@@ -790,7 +818,7 @@ function renderPledges() {
 
   if (!rows.length) {
     document.getElementById('pledge-tbody').innerHTML =
-      '<tr><td colspan="4"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
+      '<tr><td colspan="5"><div class="empty-state">No matching pledgers<p>Try adjusting your search or filter.</p></div></td></tr>';
     return;
   }
 
@@ -799,6 +827,12 @@ function renderPledges() {
     const countCell = editingCountId === p.id
       ? `<input class="num-input" id="ci-${p.id}" type="number" min="1" max="50" value="${p.count}" onkeydown="handleCountKey(event,${p.id})" onblur="saveCountEdit(${p.id})" style="width:72px">`
       : `<span class="num-tag count-tag" onclick="startCountEdit(${p.id})" title="Click to edit">${p.count}</span>`;
+
+    // Kundli cell — click to edit (0 shown muted)
+    const kundliVal = p.kundli || 0;
+    const kundliCell = editingKundliId === p.id
+      ? `<input class="num-input" id="ki-${p.id}" type="number" min="0" max="50" value="${kundliVal}" onkeydown="handleKundliKey(event,${p.id})" onblur="saveKundliEdit(${p.id})" style="width:72px">`
+      : `<span class="num-tag count-tag${kundliVal===0?' zero':''}" onclick="startKundliEdit(${p.id})" title="Click to edit">${kundliVal}</span>`;
 
     // Thaal code cell — click the number to edit (no pencil)
     let codeCell;
@@ -838,6 +872,7 @@ function renderPledges() {
         <div class="name-sub">${esc(p.email)}${p.phone && p.phone !== '—' ? ' · ' + esc(p.phone) : ''}</div>
       </td>
       <td>${countCell}</td>
+      <td>${kundliCell}</td>
       <td>${codeCell}</td>
       <td>${statusCell}</td>
     </tr>`;
@@ -885,6 +920,7 @@ function openAddPledge() {
   document.getElementById('ap-email').value = '';
   document.getElementById('ap-phone').value = '';
   document.getElementById('ap-count').value = '1';
+  document.getElementById('ap-kundli').value = '0';
   document.getElementById('ap-err').textContent = '';
   acHide();
   document.getElementById('add-modal').classList.add('open');
@@ -950,12 +986,13 @@ function submitAddPledge() {
   const email = document.getElementById('ap-email').value.trim();
   const phone = document.getElementById('ap-phone').value.trim();
   const count = parseInt(document.getElementById('ap-count').value);
+  const kundli = parseInt(document.getElementById('ap-kundli').value) || 0;
   const errEl = document.getElementById('ap-err');
   if (!name) { errEl.textContent = 'Name is required.'; return; }
   if (isNaN(count) || count < 1) { errEl.textContent = 'Enter a valid thaal count.'; return; }
   const existingMax = pledges.filter(p => p.id >= 1000).reduce((m,p) => Math.max(m, p.id), 999);
   const newId = existingMax + 1;
-  const np = { id: newId, name, email, phone, count, code: null, received: false, returned: false };
+  const np = { id: newId, name, email, phone, count, kundli, code: null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
   np.code = assignGapCode(np);   // slot into last-name order within the gap of 10
   pledges.push(np);
   saveState(); pushToCloud(newId);
@@ -989,13 +1026,20 @@ function syncToSheet() {
   showToast('Syncing to Google Sheet…');
 
   const now = new Date().toLocaleString();
-  const header = ['Thaal #', 'Name', 'Email', 'Phone', 'Thaals Pledged', 'Received', 'Returned', 'Last Synced'];
+  const header = ['Thaal #', 'Name', 'Email', 'Phone', 'Thaals Pledged', 'Kundlis Pledged',
+                  'Thaals Received', 'Kundlis Received', 'Thaals Returned', 'Kundlis Returned', 'Last Synced'];
   const sorted = [...pledges].sort((a, b) => (a.code ?? 99999) - (b.code ?? 99999));
   const rows = [header];
-  sorted.forEach(p => rows.push([
-    p.code ?? '', p.name, p.email || '', p.phone || '', p.count,
-    p.received ? 'Yes' : 'No', p.returned ? 'Yes' : 'No', now
-  ]));
+  sorted.forEach(p => {
+    const k = p.kundli || 0;
+    rows.push([
+      p.code ?? '', p.name, p.email || '', p.phone || '', p.count, k,
+      // counts only when received/returned, otherwise blank
+      p.received ? p.count : '', (p.received && k > 0) ? k : '',
+      p.returned ? p.count : '', (p.returned && k > 0) ? k : '',
+      now
+    ]);
+  });
 
   fetch(SHEET_SYNC_URL, {
     method: 'POST',
@@ -1043,7 +1087,7 @@ function sendStatusEmail(id, status) {
   if (!p) return;
   if (!p.email || !/@/.test(p.email)) { showToast(`No valid email on file for ${p.name}.`, true); return; }
   if (!SHEET_SYNC_URL || SHEET_SYNC_URL.indexOf('PASTE_') === 0) { showToast('Email sync not configured yet.', true); return; }
-  const btn = document.getElementById('email-' + status + '-' + id);
+  const btn = document.getElementById('email-' + id);
   if (btn) btn.classList.add('syncing');
   showToast(`Emailing ${p.name}…`);
   const params = '&action=email&status=' + status +
@@ -1070,11 +1114,16 @@ function sendStatusEmail(id, status) {
 
 // ── Export ────────────────────────────────────────────────────────────────────
 function openExport() {
-  const header = 'Thaal #,Name,Email,Phone,Thaals Pledged,Received,Returned';
-  const rows = [...pledges].sort((a,b)=>(a.code ?? 99999)-(b.code ?? 99999)).map(p => [
-    p.code ?? '', `"${p.name}"`, `"${p.email}"`, `"${p.phone}"`,
-    p.count, p.received ? 'Yes' : 'No', p.returned ? 'Yes' : 'No'
-  ].join(','));
+  const header = 'Thaal #,Name,Email,Phone,Thaals Pledged,Kundlis Pledged,Thaals Received,Kundlis Received,Thaals Returned,Kundlis Returned';
+  const rows = [...pledges].sort((a,b)=>(a.code ?? 99999)-(b.code ?? 99999)).map(p => {
+    const k = p.kundli || 0;
+    return [
+      p.code ?? '', `"${p.name}"`, `"${p.email}"`, `"${p.phone}"`,
+      p.count, k,
+      p.received ? p.count : '', (p.received && k > 0) ? k : '',
+      p.returned ? p.count : '', (p.returned && k > 0) ? k : ''
+    ].join(',');
+  });
   document.getElementById('export-area').value = [header, ...rows].join('\n');
   document.getElementById('export-modal').classList.add('open');
 }
