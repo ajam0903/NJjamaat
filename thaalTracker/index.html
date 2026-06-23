@@ -178,8 +178,13 @@
   .status-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
   .status-btn.st-received { background: var(--accent); color: #fff; border-color: transparent; }
   .status-btn.st-received:hover { background: var(--accent-dark); color: #fff; }
+  .status-btn.st-found { background: var(--blue); color: #fff; border-color: transparent; }
+  .status-btn.st-found:hover { background: var(--blue-dark, #143d6b); color: #fff; filter: brightness(0.92); }
   .status-btn.st-returned { background: var(--green); color: #fff; border-color: transparent; }
   .status-btn.st-returned:hover { background: #1f5038; color: #fff; }
+  .loc-line { font-size: 11px; color: var(--text2); margin-top: 5px; cursor: pointer; max-width: 220px; }
+  .loc-line:hover { color: var(--blue); }
+  .loc-empty { color: var(--accent); text-decoration: underline dotted; }
 
   /* ── Empty state ── */
   .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
@@ -281,6 +286,20 @@
       </div>
       <div class="progress-track"><div class="progress-fill pf-green" id="ret-progress-fill" style="width:0%"></div></div>
     </div>
+    <div>
+      <div class="progress-header">
+        <span id="knum-progress-label">Kundlis received</span>
+        <span id="knum-progress-pct" style="font-weight:600;color:var(--accent)">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill pf-accent" id="knum-progress-fill" style="width:0%"></div></div>
+    </div>
+    <div>
+      <div class="progress-header">
+        <span id="kret-progress-label">Kundlis returned</span>
+        <span id="kret-progress-pct" style="font-weight:600;color:var(--green)">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill pf-green" id="kret-progress-fill" style="width:0%"></div></div>
+    </div>
   </div>
 
   <div class="tabs">
@@ -375,6 +394,21 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeAddModal()">Cancel</button>
       <button class="btn btn-accent" onclick="submitAddPledge()">Add Pledge</button>
+    </div>
+  </div>
+</div>
+
+<!-- Location modal -->
+<div class="modal-overlay" id="loc-modal" onclick="closeLocationModal(event)">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">Pickup location</div>
+    <div class="modal-sub" id="loc-modal-sub">Where is this item staged for pickup?</div>
+    <input class="form-input" id="loc-input" type="text" placeholder="e.g. NJ Relay Centre — front desk"
+      style="width:100%" onkeydown="handleLocationKey(event)">
+    <div style="font-size:11px;color:var(--text3);margin-top:6px">Remembered on this device so you don't retype it.</div>
+    <div class="modal-footer" style="margin-top:1rem">
+      <button class="btn" onclick="closeLocationModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="saveLocationModal()">Save location</button>
     </div>
   </div>
 </div>
@@ -501,10 +535,17 @@ const pledges = RAW.map((r, i) => ({
   kundli: 0,         // kundlis pledged
   code: null,        // pre-assigned 4-digit thaal code
   received: false,   // items physically received & labeled
+  found: false,      // located & staged for pickup
   returned: false,   // items returned to owner
+  location: '',      // where the item is staged for pickup
   emailedReceived: false,  // sent the "received" email
+  emailedFound: false,     // sent the "ready for pickup" email
   emailedReturned: false   // sent the "returned" email
 }));
+
+// Remembered pickup location (per device) so it can be reused without retyping.
+function getLastLocation() { try { return localStorage.getItem('thaal_last_location') || ''; } catch(e) { return ''; } }
+function setLastLocation(v) { try { localStorage.setItem('thaal_last_location', v || ''); } catch(e) {} }
 
 // ── Pre-assigned thaal codes ──────────────────────────────────────────────────
 // Base pledgers get codes 1000, 1010, 1020 … in last-name order. The gaps of 10
@@ -556,8 +597,9 @@ function saveLocal() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(
       pledges.map(p => ({
-        id: p.id, code: p.code, received: p.received, returned: p.returned, count: p.count, kundli: p.kundli || 0,
-        emailedReceived: p.emailedReceived, emailedReturned: p.emailedReturned,
+        id: p.id, code: p.code, received: p.received, found: p.found, returned: p.returned,
+        count: p.count, kundli: p.kundli || 0, location: p.location || '',
+        emailedReceived: p.emailedReceived, emailedFound: p.emailedFound, emailedReturned: p.emailedReturned,
         added: p.id >= 1000, name: p.name, email: p.email, phone: p.phone
       }))
     ));
@@ -570,14 +612,17 @@ function loadLocal() {
     JSON.parse(s).forEach(d => {
       let p = pledges.find(x => x.id === d.id);
       if (!p && d.added) {
-        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
+        p = { id: d.id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, found: false, returned: false, location: '', emailedReceived: false, emailedFound: false, emailedReturned: false };
         pledges.push(p);
       }
       if (!p) return;
       if (d.code != null) p.code = d.code;
       p.received = !!d.received;
+      p.found = !!d.found;
       p.returned = !!d.returned;
+      p.location = d.location || '';
       p.emailedReceived = !!d.emailedReceived;
+      p.emailedFound = !!d.emailedFound;
       p.emailedReturned = !!d.emailedReturned;
       if (d.count != null) p.count = d.count;
       if (d.kundli != null) p.kundli = d.kundli;
@@ -601,8 +646,9 @@ function pushToCloud(id) {
   if (!cloudReady || !db) return;
   const p = pledges.find(x => x.id === id);
   if (!p) return;
-  const data = { code: p.code, received: p.received, returned: p.returned, count: p.count, kundli: p.kundli || 0,
-                 emailedReceived: !!p.emailedReceived, emailedReturned: !!p.emailedReturned };
+  const data = { code: p.code, received: p.received, found: !!p.found, returned: p.returned,
+                 count: p.count, kundli: p.kundli || 0, location: p.location || '',
+                 emailedReceived: !!p.emailedReceived, emailedFound: !!p.emailedFound, emailedReturned: !!p.emailedReturned };
   if (p.id >= 1000) { data.added = true; data.name = p.name; data.email = p.email||''; data.phone = p.phone||''; }
   db.collection(CLOUD_COLLECTION).doc(String(id)).set(data, { merge: true })
     .catch(e => console.warn('Cloud write failed:', e));
@@ -627,15 +673,18 @@ function subscribeCloud() {
       let p = pledges.find(x => x.id === id);
       if (!p) {
         if (!d.added) return;
-        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, returned: false, emailedReceived: false, emailedReturned: false };
+        p = { id, name: d.name||'', email: d.email||'', phone: d.phone||'', count: d.count||1, kundli: 0, code: d.code ?? null, received: false, found: false, returned: false, location: '', emailedReceived: false, emailedFound: false, emailedReturned: false };
         pledges.push(p);
       }
       if ('code' in d && d.code != null) p.code = d.code;
       if ('received' in d) p.received = !!d.received;
+      if ('found' in d) p.found = !!d.found;
       if ('returned' in d) p.returned = !!d.returned;
+      if ('location' in d) p.location = d.location || '';
       if ('count' in d && d.count != null) p.count = d.count;
       if ('kundli' in d && d.kundli != null) p.kundli = d.kundli;
       if ('emailedReceived' in d) p.emailedReceived = !!d.emailedReceived;
+      if ('emailedFound' in d) p.emailedFound = !!d.emailedFound;
       if ('emailedReturned' in d) p.emailedReturned = !!d.emailedReturned;
       if (d.added) { p.name = d.name||p.name; p.email = d.email||p.email; p.phone = d.phone||p.phone; }
     });
@@ -716,19 +765,57 @@ function handleCodeKey(e, id) {
   if (e.key === 'Escape') { cancelCodeEdit(); }
 }
 
-// Single cycling status: not received → Received → Returned → (reset) not received
+// Cycling status: not received → Received → Found → Returned → (reset)
 function cycleStatus(id) {
   const p = pledges.find(x => x.id === id);
   if (!p) return;
+  let openLoc = false;
   if (!p.received) {
-    p.received = true; p.returned = false;
+    p.received = true; p.found = false; p.returned = false;
+  } else if (!p.found) {
+    p.found = true; openLoc = true;     // entering Found → prompt for location
   } else if (!p.returned) {
     p.returned = true;
   } else {
-    p.received = false; p.returned = false;
-    p.emailedReceived = false; p.emailedReturned = false;
+    p.received = false; p.found = false; p.returned = false; p.location = '';
+    p.emailedReceived = false; p.emailedFound = false; p.emailedReturned = false;
   }
   saveState(); pushToCloud(id); render();
+  if (openLoc) openLocationModal(id);
+}
+
+// ── Pickup location modal ─────────────────────────────────────────────────────
+let locModalId = null;
+function openLocationModal(id) {
+  const p = pledges.find(x => x.id === id);
+  if (!p) return;
+  locModalId = id;
+  document.getElementById('loc-modal-sub').textContent = `Where is ${p.name}'s item staged for pickup?`;
+  const input = document.getElementById('loc-input');
+  input.value = p.location || getLastLocation();
+  document.getElementById('loc-modal').classList.add('open');
+  setTimeout(() => { input.focus(); input.select(); }, 50);
+}
+function closeLocationModal(e) {
+  if (!e || e.target === document.getElementById('loc-modal')) {
+    document.getElementById('loc-modal').classList.remove('open');
+    locModalId = null;
+  }
+}
+function saveLocationModal() {
+  if (locModalId === null) return;
+  const p = pledges.find(x => x.id === locModalId);
+  const val = document.getElementById('loc-input').value.trim();
+  p.location = val;
+  setLastLocation(val);                 // remember on this device
+  saveState(); pushToCloud(locModalId);
+  document.getElementById('loc-modal').classList.remove('open');
+  locModalId = null;
+  render();
+}
+function handleLocationKey(e) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveLocationModal(); }
+  if (e.key === 'Escape') { closeLocationModal(); }
 }
 
 function startCountEdit(id) {
@@ -778,6 +865,21 @@ function renderMetrics() {
   document.getElementById('ret-progress-fill').style.width = retPct + '%';
   document.getElementById('ret-progress-pct').textContent  = retPct + '%';
   document.getElementById('ret-progress-label').textContent = `Returns — ${thaalsReturned} of ${thaalsReceived} thaals returned`;
+
+  // Kundlis
+  const kundlisTotal    = pledges.reduce((s,p) => s + (p.kundli||0), 0);
+  const kundlisReceived = pledges.filter(p => p.received).reduce((s,p) => s + (p.kundli||0), 0);
+  const kundlisReturned = pledges.filter(p => p.returned).reduce((s,p) => s + (p.kundli||0), 0);
+  const knumPct = kundlisTotal    ? Math.round(kundlisReceived/kundlisTotal*100)    : 0;
+  const kretPct = kundlisReceived ? Math.round(kundlisReturned/kundlisReceived*100) : 0;
+
+  document.getElementById('knum-progress-fill').style.width = knumPct + '%';
+  document.getElementById('knum-progress-pct').textContent  = knumPct + '%';
+  document.getElementById('knum-progress-label').textContent = `Received — ${kundlisReceived} of ${kundlisTotal} kundlis`;
+
+  document.getElementById('kret-progress-fill').style.width = kretPct + '%';
+  document.getElementById('kret-progress-pct').textContent  = kretPct + '%';
+  document.getElementById('kret-progress-label').textContent = `Returns — ${kundlisReturned} of ${kundlisReceived} kundlis returned`;
 }
 
 // ── Tab state ─────────────────────────────────────────────────────────────────
@@ -851,20 +953,27 @@ function renderPledges() {
       codeCell = `<span class="num-tag clickable${p.returned?' returned':''}" onclick="startCodeEdit(${p.id})" title="Click to edit">${p.code ?? '—'}</span>`;
     }
 
-    // Status cell — single cycling button: Mark Received → Received (orange) → Returned (green)
-    let statusBtn;
-    if (p.returned)       statusBtn = `<button class="status-btn st-returned" onclick="cycleStatus(${p.id})" title="Click to reset">Returned</button>`;
-    else if (p.received)  statusBtn = `<button class="status-btn st-received" onclick="cycleStatus(${p.id})" title="Click to mark returned">Received</button>`;
-    else                  statusBtn = `<button class="status-btn" onclick="cycleStatus(${p.id})" title="Click to mark received">Mark Received</button>`;
-
-    // Email button appears once received/returned; sends the matching message
-    let emailBtn = '';
+    // Status cell — cycling button: Mark Received → Received (orange) → Found (blue) → Returned (green)
+    let statusBtn, emailBtn = '';
     if (p.returned) {
+      statusBtn = `<button class="status-btn st-returned" onclick="cycleStatus(${p.id})" title="Click to reset">Returned</button>`;
       emailBtn = `<button class="email-btn${p.emailedReturned?' emailed':''}" id="email-${p.id}" onclick="sendStatusEmail(${p.id},'returned')" title="${p.emailedReturned?'Return email sent — click to re-send':'Email return confirmation'}">${p.emailedReturned ? '✓ ✉' : '✉'}</button>`;
+    } else if (p.found) {
+      statusBtn = `<button class="status-btn st-found" onclick="cycleStatus(${p.id})" title="Click to mark returned">Found</button>`;
+      emailBtn = `<button class="email-btn${p.emailedFound?' emailed':''}" id="email-${p.id}" onclick="sendStatusEmail(${p.id},'found')" title="${p.location? (p.emailedFound?'Pickup email sent — click to re-send':'Email pickup location') : 'Set a location first'}">${p.emailedFound ? '✓ ✉' : '✉'}</button>`;
     } else if (p.received) {
+      statusBtn = `<button class="status-btn st-received" onclick="cycleStatus(${p.id})" title="Click to mark found">Received</button>`;
       emailBtn = `<button class="email-btn${p.emailedReceived?' emailed':''}" id="email-${p.id}" onclick="sendStatusEmail(${p.id},'received')" title="${p.emailedReceived?'Code email sent — click to re-send':'Email thaal code'}">${p.emailedReceived ? '✓ ✉' : '✉'}</button>`;
+    } else {
+      statusBtn = `<button class="status-btn" onclick="cycleStatus(${p.id})" title="Click to mark received">Mark Received</button>`;
     }
-    const statusCell = `<div class="cell-actions">${statusBtn}${emailBtn}</div>`;
+    // Show the pickup location (editable) once the item is Found
+    const locLine = p.found
+      ? `<div class="loc-line" onclick="openLocationModal(${p.id})" title="Click to edit location">
+           📍 ${p.location ? esc(p.location) : '<span class="loc-empty">add location</span>'}
+         </div>`
+      : '';
+    const statusCell = `<div class="cell-actions">${statusBtn}${emailBtn}</div>${locLine}`;
 
     return `<tr>
       <td class="name-cell">
@@ -1087,6 +1196,7 @@ function sendStatusEmail(id, status) {
   if (!p) return;
   if (!p.email || !/@/.test(p.email)) { showToast(`No valid email on file for ${p.name}.`, true); return; }
   if (!SHEET_SYNC_URL || SHEET_SYNC_URL.indexOf('PASTE_') === 0) { showToast('Email sync not configured yet.', true); return; }
+  if (status === 'found' && !p.location) { openLocationModal(id); showToast('Enter a pickup location first.', true); return; }
   const btn = document.getElementById('email-' + id);
   if (btn) btn.classList.add('syncing');
   showToast(`Emailing ${p.name}…`);
@@ -1095,11 +1205,14 @@ function sendStatusEmail(id, status) {
     '&name=' + encodeURIComponent(p.name) +
     '&code=' + encodeURIComponent(p.code || '') +
     '&count=' + encodeURIComponent(p.count || 1) +
-    '&kundli=' + encodeURIComponent(p.kundli || 0);
+    '&kundli=' + encodeURIComponent(p.kundli || 0) +
+    '&location=' + encodeURIComponent(p.location || '');
   jsonp(params).then(res => {
     if (btn) btn.classList.remove('syncing');
     if (res && res.status === 'ok' && res.sent) {
-      if (status === 'returned') p.emailedReturned = true; else p.emailedReceived = true;
+      if (status === 'returned') p.emailedReturned = true;
+      else if (status === 'found') p.emailedFound = true;
+      else p.emailedReceived = true;
       saveState(); pushToCloud(id); render();
       const left = (res.remaining != null) ? ` · ${res.remaining} emails left today` : '';
       showToast(`Emailed ${p.name} ✓${left}`);
